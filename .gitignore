@@ -1,0 +1,6 @@
+# materiały referencyjne producentów (renderingi/rzuty pobrane ze stron – nie do dystrybucji)
+ref/
+ref_archon/
+server.log
+.DS_Store
+__pycache__/
