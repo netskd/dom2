@@ -317,3 +317,79 @@ def rooftile():
 
 if __name__ == '__main__':
     tiles_light(); rooftile(); print('tiles, rooftile')
+
+
+# ---------------------------------------------------------------- marmur Patagonia (kremowy, brązowo-fioletowe żyły)
+def patagonia():
+    # ciepły kwarcyt (Patagonia): wyraziste brązowo-szare żyły z beżową poświatą na kremowym tle
+    n1 = fbm(N, 2, 6, 201, ax=2.2, ay=1)
+    warp = fbm(N, 5, 5, 203)
+    field = n1*1.3 + warp*0.55
+    band = np.abs(np.sin(field*np.pi*1.0))
+    wmod = norm01(fbm(N, 3, 3, 205))
+    main = np.clip(1 - band*(3.0 + 9*wmod), 0, 1)**1.3
+    halo = np.clip(1 - band*(1.1 + 1.2*wmod), 0, 1)**2.4
+    n2 = fbm(N, 3, 6, 207, ax=2.2, ay=1)
+    fine = np.clip(1 - np.abs(np.sin((n2*2.4 + warp*0.4)*np.pi*1.6))*(9+10*norm01(fbm(N, 4, 3, 209))), 0, 1)**1.5
+    fine *= norm01(fbm(N, 4, 3, 210)) > 0.4
+    bg = 238 - 8*norm01(fbm(N, 5, 4, 211))
+    img = np.stack([bg+5, bg+1, bg-5], -1)
+    def mix(im, a, c):
+        a = np.clip(a, 0, 1)[..., None]; return im*(1-a) + np.array(c, float)*a
+    img = mix(img, halo*0.38, (204, 186, 164))
+    img = mix(img, fine*0.72, (128, 100, 84))
+    img = mix(img, main*0.95, (78, 62, 58))
+    save('patagonia.jpg', img, 92)
+
+# ---------------------------------------------------------------- wenge / dąb barwiony (panele pionowe + ryflowane)
+def wenge():
+    g = fbm(N, 4, 6, 221, ax=26, ay=1); g2 = fbm(N, 28, 2, 223, ax=44, ay=1)
+    img = col(norm01(g), (38, 28, 24), (82, 62, 48))
+    img *= (0.88+0.24*norm01(g2))[..., None]
+    xx = np.mgrid[0:N, 0:N][1]
+    xp = (xx*5/N) % 1.0
+    img[xp < 0.01] *= 0.55
+    save('wenge.jpg', img)
+    h = norm01(g2)*0.1; h[xp < 0.01] -= 0.5
+    save('wenge_n.jpg', normal_from_height(h, 1.2))
+    xf = (xx*22/N) % 1.0; ridge = np.sin(xf*np.pi)
+    save('wenge_fluted.jpg', img*(0.7+0.45*ridge)[..., None])
+    save('wenge_fluted_n.jpg', normal_from_height(ridge*0.6 + norm01(g2)*0.05, 2.2))
+
+# ---------------------------------------------------------------- kremowy kamień wielkoformatowy (podłoga 120x120)
+def limestone():
+    g = fbm(N, 4, 6, 231); g2 = fbm(N, 60, 3, 233); g3 = fbm(N, 14, 4, 235)
+    img = col(norm01(g), (214, 203, 186), (236, 228, 214))*(0.96+0.09*norm01(g2))[..., None]
+    img = img*(0.97+0.06*norm01(g3))[..., None]
+    yy, xx = np.mgrid[0:N, 0:N]
+    xp = (xx*2/N) % 1.0; yp = (yy*2/N) % 1.0          # kafelek 2.4 m → płyty 120x120
+    gm = (xp < 0.004) | (yp < 0.004)
+    img[gm] = np.array((196, 186, 172))
+    save('limestone.jpg', img)
+    h = norm01(g2)*0.05; h[gm] -= 0.5
+    save('limestone_n.jpg', normal_from_height(h, 0.9))
+
+# ---------------------------------------------------------------- cedr elewacyjny (ciepły, pionowe deski)
+def cedar():
+    g = fbm(N, 4, 6, 241, ax=20, ay=1); g2 = fbm(N, 30, 2, 243, ax=36, ay=1)
+    img = col(norm01(g), (104, 62, 36), (156, 100, 58))*(0.9+0.2*norm01(g2))[..., None]
+    xx = np.mgrid[0:N, 0:N][1]
+    n = 12; xp = (xx*n/N) % 1.0
+    r = np.random.default_rng(244)
+    for i in range(n):
+        m = (xx*n//N) == i
+        img[m] *= 0.9+0.2*r.random()
+    gm = xp < 0.05
+    img[gm] *= 0.55
+    save('cedar.jpg', img)
+    h = norm01(g2)*0.1; h[gm] -= 0.8
+    save('cedar_n.jpg', normal_from_height(h, 1.6))
+
+# ---------------------------------------------------------------- ciemny tynk elewacyjny (antracyt)
+def plaster_dark():
+    g = fbm(N, 16, 4, 251); g2 = fbm(N, 80, 3, 253)
+    img = np.ones((N, N, 3))*np.array((62, 60, 58)) * (0.9+0.2*norm01(g))[..., None] * (0.95+0.1*norm01(g2))[..., None]
+    save('plaster_dark.jpg', img, 85)
+
+if __name__ == '__main__':
+    patagonia(); wenge(); limestone(); cedar(); plaster_dark(); print('hk168 tex')

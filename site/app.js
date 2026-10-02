@@ -75,6 +75,19 @@ function defineMaterials() {
   M.moss = std({ map: tex('moss.jpg', { tile: 1.0 }), normalMap: tex('moss_n.jpg', { srgb: false, tile: 1.0 }), normalScale: new THREE.Vector2(1, 1), roughness: 1.0 });
   M.concrete = std({ map: tex('concrete.jpg', { tile: 2.0 }), roughness: 0.9 });
   M.tiles_light = std({ map: tex('tiles_light.jpg', { tile: 2.4 }), normalMap: tex('tiles_light_n.jpg', { srgb: false, tile: 2.4 }), normalScale: new THREE.Vector2(0.4, 0.4), roughness: 0.3, envMapIntensity: 0.6 });
+  M.limestone = std({ map: tex('limestone.jpg', { tile: 2.4 }), normalMap: tex('limestone_n.jpg', { srgb: false, tile: 2.4 }), normalScale: new THREE.Vector2(0.3, 0.3), roughness: 0.42, envMapIntensity: 0.5 });
+  M.patagonia = std({ map: tex('patagonia.jpg', { tile: 2.0 }), roughness: 0.16, envMapIntensity: 0.9 });
+  M.patagonia_s = std({ map: tex('patagonia.jpg', { tile: 1.9 }), roughness: 0.14, envMapIntensity: 1.0 });
+  M.wenge = std({ map: tex('wenge.jpg', { tile: 1.1 }), normalMap: tex('wenge_n.jpg', { srgb: false, tile: 1.1 }), normalScale: new THREE.Vector2(0.45, 0.45), roughness: 0.42, envMapIntensity: 0.5 });
+  M.wenge_fluted = std({ map: tex('wenge_fluted.jpg', { tile: 1.1 }), normalMap: tex('wenge_fluted_n.jpg', { srgb: false, tile: 1.1 }), normalScale: new THREE.Vector2(1.0, 1.0), roughness: 0.48, envMapIntensity: 0.45 });
+  M.cedar = std({ map: tex('cedar.jpg', { tile: 1.2 }), normalMap: tex('cedar_n.jpg', { srgb: false, tile: 1.2 }), normalScale: new THREE.Vector2(0.6, 0.6), roughness: 0.62 });
+  M.plaster_dark = std({ map: tex('plaster_dark.jpg', { tile: 2.5 }), normalMap: tex('plaster_n.jpg', { srgb: false, tile: 2 }), normalScale: new THREE.Vector2(0.35, 0.35), roughness: 0.85 });
+  M.plaster_warm = std({ color: 0xece4d6, roughness: 0.92, map: tex('plaster.jpg', { tile: 2 }), normalMap: tex('plaster_n.jpg', { srgb: false, tile: 2 }), normalScale: new THREE.Vector2(0.3, 0.3) });
+  M.ceiling_warm = std({ color: 0xf6f1e7, roughness: 0.96 });
+  M.stone_beige = std({ color: 0xd9cdb8, roughness: 0.35, envMapIntensity: 0.6 });
+  M.brass = std({ color: 0xb08a52, roughness: 0.28, metalness: 0.95, envMapIntensity: 1.2 });
+  M.fabric_cream = std({ map: tex('fabric.jpg', { tile: 0.45 }), normalMap: tex('fabric_n.jpg', { srgb: false, tile: 0.45 }), normalScale: new THREE.Vector2(0.6, 0.6), roughness: 1.0, color: 0xeee6d6 });
+  M.fabric_sand = std({ map: tex('fabric.jpg', { tile: 0.45 }), roughness: 1.0, color: 0xcdbda4 });
   M.rooftile = std({ map: tex('rooftile.jpg', { tile: 1.2 }), normalMap: tex('rooftile_n.jpg', { srgb: false, tile: 1.2 }), normalScale: new THREE.Vector2(0.8, 0.8), roughness: 0.75 });
   M.marble_wall = std({ map: tex('marble.jpg', { tile: 1.6 }), roughness: 0.2, envMapIntensity: 0.7 });
   M.white_gloss = std({ color: 0xf2f1ee, roughness: 0.25, envMapIntensity: 0.8 });
@@ -279,7 +292,7 @@ function buildOpening(g, op, t, w, h) {
       for (const z of [t / 2 + 0.006, -t / 2 - 0.006]) { g.add(box(0.08, 0.08, 0.01, M.white_matte, sx, 1.1, z)); g.add(box(0.05, 0.05, 0.006, M.door_white, sx, 1.1, z + Math.sign(z) * 0.006)); }
     }
   } else if (op.kind === 'garagedoor') {
-    const panel = box(op.w, op.h, 0.06, M.cladding, cx, cy, -t / 2 + 0.02);
+    const panel = box(op.w, op.h, 0.06, M[op.mat || 'cladding'], cx, cy, -t / 2 + 0.02);
     g.add(panel);
     for (let k = 1; k < 4; k++) g.add(box(op.w, 0.012, 0.02, M.black_metal, cx, sill + op.h * k / 4, -t / 2 + 0.06));
   }
@@ -423,6 +436,76 @@ F.downpipe = ({ h = 3.0 }) => { const g = new THREE.Group(); g.add(cyl(0.045, 0.
 F.tvPanel = ({ w = 1.4, z = 1.25 }) => { const g = new THREE.Group(); g.add(box(w + 0.6, 2.2, 0.04, M.walnut_fluted, 0, 1.2, 0.02)); g.add(box(w, w * 0.56, 0.03, M.tv, 0, z, 0.06)); return g; };
 F.wardrobeRods = ({ w = 1.5 }) => { const g = new THREE.Group(); g.add(cyl(0.012, 0.012, w, M.steel, 0, 1.8, 0, 8).rotateZ(Math.PI / 2)); const rnd = mulberry(41); for (let i = 0; i < Math.floor(w / 0.12); i++) { const c = rbox(0.02, 0.9 + rnd() * 0.3, 0.42, std({ color: new THREE.Color().setHSL(rnd(), 0.15, 0.2 + rnd() * 0.5), roughness: 1 }), -w / 2 + 0.08 + i * 0.12, 1.25, 0, 0.01); g.add(c); } g.add(box(w, 0.025, 0.5, M.oak, 0, 2.05, 0)); g.add(box(w, 0.025, 0.5, M.oak, 0, 0.4, 0)); return g; };
 F.pantryShelves = ({ w = 1.5, h = 2.2 }) => { const g = new THREE.Group(); const rnd = mulberry(47); for (let i = 0; i < 5; i++) { g.add(box(w, 0.025, 0.35, M.oak, 0, 0.3 + i * (h - 0.4) / 4, 0)); for (let k = 0; k < 6; k++) if (rnd() < 0.75) g.add(cyl(0.04 + rnd() * 0.03, 0.04 + rnd() * 0.03, 0.12 + rnd() * 0.16, std({ color: new THREE.Color().setHSL(rnd(), 0.4, 0.5), roughness: 0.6 }), -w / 2 + 0.12 + k * (w - 0.24) / 5, 0.3 + i * (h - 0.4) / 4 + 0.1, 0, 12)); } return g; };
+F.ringLight = ({ r = 0.45, z = 2.1, n = 1 }) => { const g = new THREE.Group();
+  for (let i = 0; i < n; i++) { const rr = r * (1 - i * 0.28), zz = z + i * 0.22;
+    const ring = mesh(new THREE.TorusGeometry(rr, 0.035, 10, 60), M.brass); ring.rotation.x = Math.PI / 2; ring.position.y = zz; g.add(ring);
+    const em = mesh(new THREE.TorusGeometry(rr, 0.022, 8, 60), E('warm'), { cast: false, receive: false }); em.rotation.x = Math.PI / 2; em.position.y = zz - 0.03; g.add(em);
+    for (const s of [-1, 1]) g.add(cyl(0.002, 0.002, H - zz, M.brass, s * rr * 0.7, (H + zz) / 2, 0, 5)); }
+  g.add(cyl(0.05, 0.05, 0.015, M.brass, 0, H - 0.008, 0)); return g; };
+F.curvedSofa = ({ w = 3.2, d = 1.1, mat = 'fabric_cream' }) => { const g = new THREE.Group(); const m = M[mat];
+  g.add(rbox(w, 0.42, d, m, 0, 0.21, 0, 0.14));
+  const n = Math.max(3, Math.round(w / 0.85));
+  for (let i = 0; i < n; i++) g.add(rbox(w / n - 0.02, 0.2, d - 0.3, m, (i - (n - 1) / 2) * w / n, 0.52, 0.06, 0.08));
+  for (let i = 0; i < n; i++) { const b = rbox(w / n - 0.04, 0.5, 0.3, m, (i - (n - 1) / 2) * w / n, 0.72, -d / 2 + 0.18, 0.13); g.add(b); }
+  for (const s of [-1, 1]) g.add(rbox(0.26, 0.32, d - 0.1, m, s * (w / 2 - 0.13), 0.56, 0.02, 0.13));
+  const pil = (x, mm) => { const p = rbox(0.52, 0.52, 0.16, mm, x, 0.72, -d / 2 + 0.42, 0.08); p.rotation.x = -0.22; g.add(p); };
+  pil(-w / 4, M.fabric_sand); pil(w / 4, M.fabric_light);
+  g.userData.collide = [w, d]; return g; };
+F.marbleTable = ({ w = 1.3, d = 0.85 }) => { const g = new THREE.Group();
+  g.add(box(w, 0.1, d, M.patagonia_s, 0, 0.42, 0));
+  g.add(box(w * 0.3, 0.37, d * 0.75, M.patagonia_s, -w * 0.25, 0.185, 0)); g.add(box(w * 0.26, 0.37, d * 0.6, M.patagonia_s, w * 0.28, 0.185, 0.05));
+  g.add(cyl(0.11, 0.1, 0.09, M.brass, w * 0.15, 0.515, -0.1, 24)); g.userData.collide = [w, d]; return g; };
+F.ovalTable = ({ w = 2.6, d = 1.2 }) => { const g = new THREE.Group();
+  const top = mesh(new THREE.CylinderGeometry(1, 1, 0.06, 56), M.patagonia_s); top.scale.set(w / 2, 1, d / 2); top.position.y = 0.74; g.add(top);
+  const base = mesh(new THREE.CylinderGeometry(0.34, 0.46, 0.7, 40), M.brass); base.position.y = 0.36; g.add(base);
+  g.userData.collide = [w, d]; return g; };
+F.diningChair = ({ mat = 'fabric_sand' }) => { const g = new THREE.Group();
+  g.add(rbox(0.5, 0.12, 0.48, M[mat], 0, 0.44, 0, 0.06));
+  const b = rbox(0.5, 0.46, 0.14, M[mat], 0, 0.68, -0.2, 0.07); b.rotation.x = -0.1; g.add(b);
+  g.add(cyl(0.2, 0.24, 0.38, std({ color: 0xc9b89c, roughness: 0.8 }), 0, 0.19, 0, 24)); return g; };
+F.barIsland = ({ w = 3.2, d = 1.1 }) => { const g = new THREE.Group();
+  g.add(box(w, 0.86, d, M.stone_beige, 0, 0.43, 0));
+  g.add(box(w + 0.06, 0.06, d + 0.06, M.stone_beige, 0, 0.89, 0));
+  g.add(box(w - 0.3, 0.26, 0.04, M.brass, 0, 0.5, d / 2 + 0.02));                  // mosiężny cokół baru
+  g.add(box(0.8, 0.008, 0.46, M.appliance_black, -w * 0.18, 0.925, -0.1));          // płyta indukcyjna
+  g.add(cyl(0.02, 0.02, 0.3, M.brass, w * 0.3, 1.05, -0.2, 12)); const sp = cyl(0.016, 0.016, 0.22, M.brass, w * 0.3 - 0.11, 1.2, -0.2, 10); sp.rotation.z = Math.PI / 2; g.add(sp);
+  g.userData.collide = [w, d]; return g; };
+F.barStools = ({ n = 3, gap = 0.62 }) => { const g = new THREE.Group();
+  for (let i = 0; i < n; i++) { const x = (i - (n - 1) / 2) * gap;
+    g.add(cyl(0.21, 0.21, 0.08, M.fabric_cream, x, 0.68, 0, 28));
+    const b = mesh(new THREE.TorusGeometry(0.2, 0.022, 8, 24, Math.PI), M.black_metal); b.position.set(x, 0.92, -0.08); b.rotation.set(Math.PI / 2, 0, 0); g.add(b);
+    for (let k = 0; k < 4; k++) { const a = k * Math.PI / 2 + 0.78; g.add(cyl(0.011, 0.011, 0.68, M.black_metal, x + Math.cos(a) * 0.16, 0.34, Math.sin(a) * 0.16, 6)); } }
+  return g; };
+F.freeTub = ({ w = 1.75, d = 0.8 }) => { const g = new THREE.Group();
+  const o = mesh(new THREE.CylinderGeometry(1, 0.86, 0.58, 48), M.ceramic); o.scale.set(w / 2, 1, d / 2); o.position.y = 0.29; g.add(o);
+  const i2 = mesh(new THREE.CylinderGeometry(0.92, 0.78, 0.5, 48), std({ color: 0xf2efe9, roughness: 0.15 })); i2.scale.set(w / 2 - 0.05, 1, d / 2 - 0.05); i2.position.y = 0.35; g.add(i2);
+  g.userData.collide = [w, d]; return g; };
+F.vanityStone = ({ w = 2.0, basins = 2 }) => { const g = new THREE.Group();
+  g.add(rbox(w, 0.42, 0.52, M.wenge, 0, 0.72, 0.26, 0.01));                       // podwieszana szafka wenge
+  g.add(box(w * 0.62, 0.16, 0.5, M.patagonia_s, 0, 1.0, 0.26));                    // marmurowa misa-blat
+  for (let i = 0; i < basins; i++) { const x = basins === 1 ? 0 : (i - 0.5) * w * 0.34;
+    g.add(cyl(0.17, 0.15, 0.02, std({ color: 0xece7df, roughness: 0.2 }), x, 1.075, 0.26, 32));
+    const t = cyl(0.012, 0.012, 0.16, M.brass, x, 1.22, 0.1, 10); t.rotation.x = Math.PI / 2; g.add(t);
+    g.add(cyl(0.025, 0.025, 0.03, M.brass, x, 1.22, 0.03, 12).rotateX(Math.PI / 2)); }
+  g.add(box(w - 0.2, 0.02, 0.04, M.wenge, 0, 0.5, 0.5));
+  g.userData.collide = [w, 0.55]; return g; };
+F.mirrorLed = ({ w = 2.0, h = 0.9, z = 1.75 }) => { const g = new THREE.Group();
+  g.add(box(w, h, 0.02, M.mirror, 0, z, 0.012));
+  for (const s of [-1, 1]) { const e = mesh(new THREE.BoxGeometry(w + 0.06, 0.012, 0.012), E('warmSoft'), { cast: false, receive: false }); e.position.set(0, z + s * (h / 2 + 0.02), 0.012); g.add(e); }
+  return g; };
+F.towelRail = ({ z = 1.05 }) => { const g = new THREE.Group(); for (let i = 0; i < 6; i++) g.add(cyl(0.011, 0.011, 0.44, M.brass, 0, z - 0.33 + i * 0.13, 0.045, 8).rotateZ(Math.PI / 2)); for (const s of [-1, 1]) g.add(box(0.026, 0.8, 0.026, M.brass, s * 0.22, z, 0.03)); const t = cyl(0.05, 0.05, 0.28, std({ color: 0xe8e4dc, roughness: 1 }), 0.0, z + 0.33, 0.09, 12); t.rotation.z = Math.PI / 2; g.add(t); return g; };
+F.sconceRing = ({ z = 1.6 }) => { const g = new THREE.Group(); const r = mesh(new THREE.TorusGeometry(0.1, 0.03, 8, 28), M.brass); r.position.set(0, z, 0.05); g.add(r);
+  const e = mesh(new THREE.CircleGeometry(0.075, 20), E('warm'), { cast: false, receive: false }); e.position.set(0, z, 0.048); g.add(e); return g; };
+F.panelBed = ({ w = 1.9, d = 2.1 }) => { const g = new THREE.Group();
+  g.add(rbox(w + 0.5, 0.34, d + 0.3, M.fabric_sand, 0, 0.17, 0.1, 0.05));          // szeroka platforma
+  g.add(rbox(w, 0.26, d, M.bedding, 0, 0.47, 0, 0.05));
+  const duv = rbox(w + 0.08, 0.16, d * 0.62, M.bedding, 0, 0.62, d * 0.16, 0.06); g.add(duv);
+  g.add(rbox(w + 0.5, 0.42, 0.6, M.fabric_sand, 0, 0.42, d / 2 + 0.3, 0.1));        // ławka u stóp
+  g.add(rbox(w + 0.2, 0.75, 0.22, M.fabric_cream, 0, 0.72, -d / 2 - 0.08, 0.06));   // tapicerowany zagłówek
+  for (const s of [-1, 1]) { const p = rbox(0.66, 0.44, 0.18, M.bedding, s * 0.42, 0.74, -d / 2 + 0.22, 0.07); p.rotation.x = -0.3; g.add(p); }
+  g.userData.collide = [w + 0.5, d + 0.9]; return g; };
+F.stoneStrip = ({ w = 3.0, h = 0.8, z = 0.6 }) => { const g = new THREE.Group(); g.add(box(w, h, 0.03, M.patagonia_s, 0, z, 0.015)); return g; };
+F.fluteWall = ({ w = 3.0, h = 2.4, z = 0 }) => { const g = new THREE.Group(); g.add(box(w, h, 0.04, M.wenge_fluted, 0, z + h / 2, 0.02)); return g; };
 F.pendant = ({ r, z }) => { const g = new THREE.Group(); const shade = mesh(new THREE.CylinderGeometry(0.06, r, 0.34, 40, 1, true), std({ color: 0xf1ede4, roughness: 1, side: THREE.DoubleSide }), { cast: false });
   shade.position.y = z; g.add(shade); const cap = cyl(0.06, 0.06, 0.02, M.white_matte, 0, z + 0.17, 0); g.add(cap); g.add(cyl(0.004, 0.004, H - z - 0.18, M.black_metal, 0, (H + z + 0.18) / 2 - 0.09, 0, 6)); g.add(cyl(0.06, 0.06, 0.02, M.white_matte, 0, H - 0.02, 0));
   const bulb = mesh(new THREE.SphereGeometry(0.035, 16, 12), E('warm'), { cast: false, receive: false }); bulb.position.y = z - 0.02; g.add(bulb); return g; };
@@ -776,7 +859,8 @@ async function main() {
   let saved = null; try { saved = localStorage.getItem('house'); } catch (e) {}
   const id = hp || saved || 'hk88';
   if (hs) { hs.value = id; if (hs.value !== id) hs.value = 'hk88'; hs.addEventListener('change', () => { try { localStorage.setItem('house', hs.value); } catch (e) {} location.hash = 'house=' + hs.value; location.reload(); }); }
-  HOUSE = (await import(`./${id}.js`)).default; H = HOUSE.ceiling;
+  const cb = new URLSearchParams(location.search).get('v');
+  HOUSE = (await import(`./${id}.js` + (cb ? `?v=${cb}` : ''))).default; H = HOUSE.ceiling;
   defineMaterials();
   buildFloors(); buildCeilings(); for (const w of HOUSE.walls) buildWall(w); buildBoxes(); buildRoof(); buildFurniture(); buildLights(); buildSite();
   // kontrola: meble/zabudowy blokujące przejścia (log w konsoli)
