@@ -18,7 +18,6 @@ export default {
   author: 'HOMEKONCEPT · parterowy 199 m², dach kopertowy, wysoki salon',
   location: { lat: 53.13, lon: 23.16, name: 'Białystok' },
   ceiling: H,
-  doorH: 2.4,
   entranceSide: 'S',
   center: [6.5, 5.5],
   mapBounds: [-4.6, -9.6, 17.6, 18.2],

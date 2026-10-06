@@ -213,7 +213,7 @@ function buildWall(w) {
     if (y0 <= 0.001 && x1 - x0 > 0.12 && !w.noSkirting) { const sk = w.skirting || 'door_white'; const sides = w.ext ? [1] : [1, -1];
       for (const s of sides) { const sm = mesh(new THREE.BoxGeometry(x1 - x0, 0.08, 0.012), M[sk], { cast: false }); sm.position.set((x0 + x1) / 2, 0.04, s * (t / 2 + 0.006)); g.add(sm); } } };
   const ops = [...(w.openings || [])].sort((p, q) => p.at - q.at);
-  for (const op of ops) if (op.kind === 'door') { if ((op.open || 0) < 70) op.open = 80; if (op.leaf !== 'entry' && op.leaf !== 'glass') { op.h = Math.max(op.h, HOUSE.doorH || 2.2); if (op.w < 0.9) op.w = 0.9; } }
+  for (const op of ops) if (op.kind === 'door' && (op.open || 0) < 70) op.open = 85;   // wszystkie skrzydła otwarte – dom jest do zwiedzania
   let cur = 0;
   for (const op of ops) {
     if (op.at > cur + 0.001) { solid(cur, op.at, base, h); seg(cur, op.at); }
@@ -274,24 +274,27 @@ function buildOpening(g, op, t, w, h) {
     g.add(box(op.w, jamb, pdepth, op.leaf === 'entry' ? M.door_entry : M.door_white, cx, top - jamb / 2, 0));
     const lw = op.w - 2 * jamb, lh = op.h - jamb - 0.01;
     const leafMat = op.leaf === 'white' ? M.door_white : op.leaf === 'entry' ? M.door_entry : op.leaf === 'glass' ? M.glass_dark : M.walnut;
-    const hingeRight = op.swing === 'R';
-    const pivot = new THREE.Group(); pivot.position.set(hingeRight ? x1 - jamb : x0 + jamb, 0, 0);
-    const dir = hingeRight ? -1 : 1;
     const into = (op.into || 'R') === 'R' ? 1 : -1;
-    pivot.rotation.y = -dir * into * (op.open || 0) * DEG;
-    const leaf = box(lw, lh, 0.045, leafMat, dir * lw / 2, lh / 2, 0);
-    if (op.leaf === 'glass') { leaf.castShadow = false; }
-    pivot.add(leaf);
-    // klamka
-    pivot.add(box(0.12, 0.02, 0.02, M.black_metal, dir * (lw - 0.1), 1.02, 0.035));
-    pivot.add(box(0.12, 0.02, 0.02, M.black_metal, dir * (lw - 0.1), 1.02, -0.035));
-    if (op.leaf === 'entry') { // pochwyt pionowy
-      pivot.add(cyl(0.012, 0.012, 1.2, M.steel, dir * (lw - 0.12), 1.1, -0.06));
-      pivot.add(box(0.06, 0.02, 0.02, M.steel, dir * (lw - 0.12), 0.55, -0.045)); pivot.add(box(0.06, 0.02, 0.02, M.steel, dir * (lw - 0.12), 1.65, -0.045));
-    }
-    g.add(pivot);
+    const double = op.w >= 1.4;                            // szerokie otwory jako drzwi dwuskrzydłowe
+    const makeLeaf = (hingeX, dir, width) => {
+      const pivot = new THREE.Group(); pivot.position.set(hingeX, 0, 0);
+      pivot.rotation.y = -dir * into * (op.open || 0) * DEG;
+      const leaf = box(width, lh, 0.045, leafMat, dir * width / 2, lh / 2, 0);
+      if (op.leaf === 'glass') leaf.castShadow = false;
+      pivot.add(leaf);
+      pivot.add(box(0.12, 0.02, 0.02, M.black_metal, dir * (width - 0.1), 1.02, 0.035));
+      pivot.add(box(0.12, 0.02, 0.02, M.black_metal, dir * (width - 0.1), 1.02, -0.035));
+      if (op.leaf === 'entry') {                           // pionowy pochwyt
+        pivot.add(cyl(0.012, 0.012, Math.min(1.2, lh - 0.5), M.steel, dir * (width - 0.12), lh / 2, -0.06));
+        pivot.add(box(0.06, 0.02, 0.02, M.steel, dir * (width - 0.12), lh / 2 - 0.55, -0.045));
+        pivot.add(box(0.06, 0.02, 0.02, M.steel, dir * (width - 0.12), lh / 2 + 0.55, -0.045));
+      }
+      g.add(pivot);
+    };
+    if (double) { const half = lw / 2; makeLeaf(x0 + jamb, 1, half); makeLeaf(x1 - jamb, -1, half); }
+    else { const hingeRight = op.swing === 'R'; makeLeaf(hingeRight ? x1 - jamb : x0 + jamb, hingeRight ? -1 : 1, lw); }
     if (op.leaf !== 'entry' && op.leaf !== 'glass') { // włączniki po obu stronach ściany
-      const sx = hingeRight ? x1 + 0.18 : x0 - 0.18;
+      const sx = op.swing === 'R' ? x1 + 0.18 : x0 - 0.18;
       for (const z of [t / 2 + 0.006, -t / 2 - 0.006]) { g.add(box(0.08, 0.08, 0.01, M.white_matte, sx, 1.1, z)); g.add(box(0.05, 0.05, 0.006, M.door_white, sx, 1.1, z + Math.sign(z) * 0.006)); }
     }
   } else if (op.kind === 'garagedoor') {
@@ -726,7 +729,7 @@ let envRT = null;
 const stars = (() => { const n = 2200, pos = new Float32Array(n * 3), rnd = mulberry(9); for (let i = 0; i < n; i++) { const u = rnd() * 2 - 1, th = rnd() * Math.PI * 2, r = Math.sqrt(1 - u * u); pos.set([r * Math.cos(th) * 800, Math.abs(u) * 800 + 20, r * Math.sin(th) * 800], i * 3); }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); const m = new THREE.PointsMaterial({ color: 0xffffff, size: 1.6, sizeAttenuation: false, transparent: true, opacity: 0, depthWrite: false }); const p = new THREE.Points(g, m); p.frustumCulled = false; scene.add(p); return p; })();
 
-const state = { hour: 14.5, date: new Date(2026, 5, 21), orient: 'W', lightsMode: 'auto', quality: new URLSearchParams(location.search).get('q') || 'high', roof: true, mode: 'walk', fov: 72, speed: 1 };
+const state = { sens: 1, hour: 14.5, date: new Date(2026, 5, 21), orient: 'W', lightsMode: 'auto', quality: new URLSearchParams(location.search).get('q') || 'high', roof: true, mode: 'walk', fov: 72, speed: 1 };
 
 function dayOfYear(d) { const s = new Date(d.getFullYear(), 0, 0); return Math.floor((d - s) / 864e5); }
 function tzOffset(d) { // Polska: CET/CEST (ostatnia niedziela marca / października)
@@ -791,14 +794,14 @@ function tryLock() {
   catch (e) { lockOK = false; $('#hint').hidden = true; }
 }
 canvas.addEventListener('mousedown', (e) => { if (state.mode !== 'walk' || document.pointerLockElement || e.button !== 0) return; dragging = [e.clientX, e.clientY]; });
-addEventListener('mousemove', (e) => { if (!dragging) return; const dx = e.clientX - dragging[0], dy = e.clientY - dragging[1]; dragging = [e.clientX, e.clientY]; camera.rotation.order = 'YXZ'; camera.rotation.y -= dx * 0.0035; camera.rotation.x = clamp(camera.rotation.x - dy * 0.0035, -1.5, 1.5); });
+addEventListener('mousemove', (e) => { if (!dragging) return; const dx = e.clientX - dragging[0], dy = e.clientY - dragging[1]; dragging = [e.clientX, e.clientY]; const k = 0.005 * state.sens; camera.rotation.order = 'YXZ'; camera.rotation.y -= dx * k; camera.rotation.x = clamp(camera.rotation.x - dy * k, -1.5, 1.5); });
 addEventListener('mouseup', () => { dragging = null; });
 const keys = {}; addEventListener('keydown', (e) => { keys[e.code] = true; if (e.code === 'KeyF' && document.pointerLockElement) toggleFly(); }); addEventListener('keyup', (e) => { keys[e.code] = false; });
 let eyeZ = 0, fly = false; const EYE = 1.62; const PR = 0.24;
 function toggleFly() { fly = !fly; }
 const touch = { move: null, look: null, mx: 0, my: 0 };
 canvas.addEventListener('touchstart', (e) => { for (const t of e.changedTouches) { const half = innerWidth / 2; if (t.clientX < half && !touch.move) touch.move = { id: t.identifier, x0: t.clientX, y0: t.clientY, x: t.clientX, y: t.clientY }; else if (!touch.look) touch.look = { id: t.identifier, x: t.clientX, y: t.clientY }; } }, { passive: true });
-canvas.addEventListener('touchmove', (e) => { for (const t of e.changedTouches) { if (touch.move && t.identifier === touch.move.id) { touch.move.x = t.clientX; touch.move.y = t.clientY; } if (touch.look && t.identifier === touch.look.id) { const dx = t.clientX - touch.look.x, dy = t.clientY - touch.look.y; touch.look.x = t.clientX; touch.look.y = t.clientY; if (state.mode === 'walk') { camera.rotation.order = 'YXZ'; camera.rotation.y -= dx * 0.004; camera.rotation.x = clamp(camera.rotation.x - dy * 0.004, -1.5, 1.5); } } } }, { passive: true });
+canvas.addEventListener('touchmove', (e) => { for (const t of e.changedTouches) { if (touch.move && t.identifier === touch.move.id) { touch.move.x = t.clientX; touch.move.y = t.clientY; } if (touch.look && t.identifier === touch.look.id) { const dx = t.clientX - touch.look.x, dy = t.clientY - touch.look.y; touch.look.x = t.clientX; touch.look.y = t.clientY; if (state.mode === 'walk') { const k = 0.005 * state.sens; camera.rotation.order = 'YXZ'; camera.rotation.y -= dx * k; camera.rotation.x = clamp(camera.rotation.x - dy * k, -1.5, 1.5); } } } }, { passive: true });
 canvas.addEventListener('touchend', (e) => { for (const t of e.changedTouches) { if (touch.move && t.identifier === touch.move.id) touch.move = null; if (touch.look && t.identifier === touch.look.id) touch.look = null; } }, { passive: true });
 
 // pozycja gracza w układzie rzutu
@@ -845,6 +848,12 @@ function initUI() {
   $('#quality').addEventListener('change', (e) => { state.quality = e.target.value; setQuality(); });
   $('#roof').addEventListener('change', (e) => { state.roof = e.target.checked; if (state.mode === 'orbit') { roofGroup.visible = state.roof; ceilGroup.visible = state.roof; } });
   $('#fov').addEventListener('input', (e) => { camera.fov = +e.target.value; camera.updateProjectionMatrix(); });
+  const sens = $('#sens'), sensv = $('#sensv');
+  const applySens = (v) => { state.sens = v; walk.pointerSpeed = v; sensv.textContent = v.toFixed(1) + '×'; };
+  let savedSens = null; try { savedSens = parseFloat(localStorage.getItem('sens')); } catch (e) {}
+  sens.value = Number.isFinite(savedSens) && savedSens > 0 ? savedSens : 1;
+  applySens(+sens.value);
+  sens.addEventListener('input', () => { applySens(+sens.value); try { localStorage.setItem('sens', sens.value); } catch (e) {} });
   $('#panelToggle').addEventListener('click', () => $('#panel').classList.toggle('open'));
   $('#hint .card').addEventListener('click', () => { $('#hint').hidden = true; tryLock(); });
   canvas.addEventListener('click', () => { if (state.mode === 'walk' && lockOK && !document.pointerLockElement) tryLock(); });

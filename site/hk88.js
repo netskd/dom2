@@ -14,13 +14,12 @@ export default {
   author: 'proj. arch. Bartłomiej Szymańczuk / HomeKoncept',
   location: { lat: 53.13, lon: 23.16, name: 'Białystok' },
   ceiling: H,
-  doorH: 2.5,
   entranceSide: 'S',
   bounds: [-24, -22, 40, 22],   // obszar działki [x0,y0,x1,y1]
 
   // ---------------------------------------------------------------- pomieszczenia (minimapa, teleport)
   rooms: [
-    { id: 'wejscie', name: 'Przed wejściem', rect: [8.8, -8.6, 10.0, -3.9], spawn: [9.4, -6.2], look: [0, 1], outdoor: true },
+    { id: 'wejscie', name: 'Przed wejściem', rect: [8.8, -8.6, 10.0, -3.9], spawn: [9.35, -3.1], look: [1, -0.1], outdoor: true },
     { id: 'wiatrolap', name: '1 · Wiatrołap', rect: [10.15, -3.75, 12.15, 1.43], spawn: [11.1, -3.0], look: [0, 1] },
     { id: 'garderoba', name: '2 · Garderoba', rect: [12.27, -1.62, 14.95, 1.43], spawn: [13.5, -0.1], look: [1, 0] },
     { id: 'hol', name: '3 · Komunikacja', rect: [11.45, 1.62, 24.63, 3.29], spawn: [13.2, 2.45], look: [-1, 0] },
@@ -121,7 +120,7 @@ export default {
     ] }),
     W([24.75, -4.85], [26.9, -4.85], 0.3, { matL: 'sinter', matR: 'plaster', ext: true }),
     W([26.9, -4.85], [26.9, -8.53], 0.3, { matL: 'sinter', matR: 'plaster', ext: true, openings: [
-      { at: 1.15, w: 1.0, h: 2.1, kind: 'door', leaf: 'entry', open: 0 },
+      { at: 1.15, w: 0.9, h: 2.1, kind: 'door', leaf: 'entry', open: 85 },
     ] }),
     W([26.9, -8.53], [12.15, -8.53], 0.3, { matL: 'sinter', matR: 'plaster', ext: true, openings: [
       { at: 6.8, w: 3.4, h: 2.3, kind: 'garagedoor' },
@@ -130,7 +129,7 @@ export default {
     W([12.33, -8.53], [12.33, -3.9], 0.35, { matL: 'cladding', matR: 'plaster', ext: true }),
     W([12.33, -3.9], [10.0, -3.9], 0.3, { matL: 'cladding', matR: 'plaster', ext: true }),
     W([10.0, -3.9], [10.0, -0.15], 0.3, { matL: 'cladding', matR: 'plaster', ext: true, openings: [
-      { at: 0.25, w: 1.0, h: 2.4, kind: 'door', leaf: 'entry', open: 75, swing: 'L', number: '88' },
+      { at: 0.25, w: 1.1, h: 2.4, kind: 'door', leaf: 'entry', open: 75, swing: 'L', number: '88' },
       { at: 1.5, w: 1.1, h: 2.5, kind: 'glass' },
     ] }),
     W([10.15, -0.15], [8.8, -0.15], 0.3, { matL: 'cladding', matR: 'plaster', ext: true }),
@@ -139,13 +138,13 @@ export default {
     // ---- wewnętrzne
     W([5.97, 1.525], [10.15, 1.525], 0.19, { mat: 'graphite' }),
     W([10.15, 1.525], [15.03, 1.525], 0.19, { mat: 'plaster', openings: [{ at: 0, w: 1.2, h: 2.4, kind: 'opening' }] }),
-    W([15.03, 1.525], [17.8, 1.525], 0.19, { mat: 'plaster', matR: 'slate', openings: [{ at: 1.17, w: 0.9, h: 2.1, kind: 'door', leaf: 'white', open: 80, swing: 'R' }] }),
-    W([17.8, 1.525], [20.35, 1.525], 0.19, { mat: 'plaster', openings: [{ at: 1.2, w: 0.9, h: 2.1, kind: 'door', leaf: 'white', open: 80, swing: 'R' }] }),
-    W([20.35, 1.525], [24.75, 1.525], 0.19, { mat: 'plaster', matR: 'slate', openings: [{ at: 2.1, w: 0.9, h: 2.1, kind: 'door', leaf: 'dark', open: 85, swing: 'R' }] }),
-    W([5.97, -0.15], [5.97, 1.525], 0.12, { mat: 'plaster', openings: [{ at: 0.3, w: 0.9, h: 2.1, kind: 'door', leaf: 'dark', open: 20, swing: 'L' }] }),
+    W([15.03, 1.525], [17.8, 1.525], 0.19, { mat: 'plaster', matR: 'slate', openings: [{ at: 1.17, w: 0.9, h: 2.4, kind: 'door', leaf: 'white', open: 80, swing: 'R' }] }),
+    W([17.8, 1.525], [20.35, 1.525], 0.19, { mat: 'plaster', openings: [{ at: 1.2, w: 0.9, h: 2.4, kind: 'door', leaf: 'white', open: 80, swing: 'R' }] }),
+    W([20.35, 1.525], [24.75, 1.525], 0.19, { mat: 'plaster', matR: 'slate', openings: [{ at: 2.1, w: 0.9, h: 2.4, kind: 'door', leaf: 'dark', open: 85, swing: 'R' }] }),
+    W([5.97, -0.15], [5.97, 1.525], 0.12, { mat: 'plaster', openings: [{ at: 0.3, w: 0.9, h: 2.4, kind: 'door', leaf: 'dark', open: 20, swing: 'L' }] }),
     W([8.51, -0.15], [8.51, 1.525], 0.12, { mat: 'plaster' }),
-    W([12.21, 1.525], [12.21, -1.78], 0.12, { mat: 'plaster', openings: [{ at: 1.32, w: 0.9, h: 2.1, kind: 'door', leaf: 'dark', open: 85, swing: 'L', into: 'L' }] }),
-    W([12.33, -1.78], [12.33, -3.9], 0.35, { matR: 'plaster', matL: 'garage_wall', openings: [{ at: 0.6, w: 0.9, h: 2.1, kind: 'door', leaf: 'white', open: 0 }] }),
+    W([12.21, 1.525], [12.21, -1.78], 0.12, { mat: 'plaster', openings: [{ at: 1.32, w: 0.9, h: 2.4, kind: 'door', leaf: 'dark', open: 85, swing: 'L', into: 'L' }] }),
+    W([12.33, -1.78], [12.33, -3.9], 0.35, { matR: 'plaster', matL: 'garage_wall', openings: [{ at: 0.6, w: 0.9, h: 2.4, kind: 'door', leaf: 'white', open: 0 }] }),
     W([12.21, -1.78], [15.03, -1.78], 0.32, { mat: 'plaster', matR: 'garage_wall' }),
     W([15.03, -1.78], [17.8, -1.78], 0.32, { matL: 'slate', matR: 'garage_wall' }),
     W([17.8, -1.78], [20.55, -1.78], 0.32, { mat: 'plaster', matR: 'garage_wall' }),
@@ -153,19 +152,19 @@ export default {
     W([17.8, 1.525], [17.8, -1.78], 0.1, { matR: 'slate', matL: 'plaster' }),
     W([20.675, 1.525], [20.675, -1.78], 0.65, { matR: 'plaster', matL: 'slate' }),
     W([20.75, -1.78], [20.75, -4.85], 0.4, { matR: 'garage_wall', matL: 'slate' }),
-    W([20.75, -4.85], [20.75, -8.53], 0.4, { mat: 'garage_wall', openings: [{ at: 2.05, w: 0.9, h: 2.1, kind: 'door', leaf: 'white', open: 0 }] }),
+    W([20.75, -4.85], [20.75, -8.53], 0.4, { mat: 'garage_wall', openings: [{ at: 2.05, w: 0.9, h: 2.4, kind: 'door', leaf: 'white', open: 0 }] }),
     W([24.75, -4.85], [20.55, -4.85], 0.37, { matR: 'slate', matL: 'garage_wall' }),
     W([11.6, 3.37], [24.75, 3.37], 0.16, { mat: 'plaster', openings: [
-      { at: 3.2, w: 0.9, h: 2.1, kind: 'door', leaf: 'white', open: 85, swing: 'L', into: 'L' },
-      { at: 5.35, w: 0.9, h: 2.1, kind: 'door', leaf: 'white', open: 85, swing: 'L', into: 'L' },
-      { at: 9.65, w: 0.9, h: 2.1, kind: 'door', leaf: 'white', open: 85, swing: 'L', into: 'L' },
+      { at: 3.2, w: 0.9, h: 2.4, kind: 'door', leaf: 'white', open: 85, swing: 'L', into: 'L' },
+      { at: 5.35, w: 0.9, h: 2.4, kind: 'door', leaf: 'white', open: 85, swing: 'L', into: 'L' },
+      { at: 9.65, w: 0.9, h: 2.4, kind: 'door', leaf: 'white', open: 85, swing: 'L', into: 'L' },
     ] }),
     W([11.6, 3.37], [11.6, 7.56], 0.3, { mat: 'plaster' }),
     W([16.275, 3.37], [16.275, 7.56], 1.15, { mat: 'plaster' }),
     W([20.35, 3.37], [20.35, 7.56], 0.2, { mat: 'plaster' }),
     W([24.75, 8.65], [24.75, -0.15], 0.25, { mat: 'plaster', openings: [
-      { at: 5.58, w: 0.9, h: 2.1, kind: 'door', leaf: 'white', open: 85, swing: 'L', into: 'L' },
-      { at: 7.35, w: 0.9, h: 2.1, kind: 'door', leaf: 'dark', open: 0 },
+      { at: 5.58, w: 0.9, h: 2.4, kind: 'door', leaf: 'white', open: 85, swing: 'L', into: 'L' },
+      { at: 7.35, w: 0.9, h: 2.4, kind: 'door', leaf: 'dark', open: 0 },
     ] }),
     W([24.75, 1.68], [29.35, 1.68], 0.16, { mat: 'plaster', openings: [{ at: 0.15, w: 1.0, h: 2.3, kind: 'opening' }] }),
     W([25.7, 5.99], [28.3, 5.99], 0.78, { mat: 'walnut_fluted' }),   // ściana za łóżkiem (obustronnie ryflowana)
