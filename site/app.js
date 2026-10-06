@@ -8,6 +8,8 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { registerShapes } from './shapes.js';
 
 const $ = (s) => document.querySelector(s);
 const DEG = Math.PI / 180;
@@ -235,11 +237,30 @@ function buildOpening(g, op, t, w, h) {
   const fr = M.frame, prof = op.frame === 'thin' ? 0.03 : 0.06, depth = op.frame === 'thin' ? 0.05 : Math.max(0.08, t * 0.5);
   const frame = (kind) => {
     if (op.frame === 'none') return;
-    g.add(box(prof, op.h, depth, fr, x0 + prof / 2, cy, 0));
-    g.add(box(prof, op.h, depth, fr, x1 - prof / 2, cy, 0));
-    g.add(box(op.w, prof, depth, fr, cx, top - prof / 2, 0));
-    g.add(box(op.w, kind === 'glass' && sill > 0 ? prof : 0.02, depth, fr, cx, sill + (kind === 'glass' && sill > 0 ? prof / 2 : 0.01), 0));
-    for (const mx of op.mullions || []) g.add(box(0.05, op.h, depth, fr, x0 + mx, cy, 0));
+    const dp = depth, sashP = prof * 0.62, sashD = dp * 0.6, inset = 0.012;
+    // ościeżnica (rama w murze)
+    g.add(box(prof, op.h, dp, fr, x0 + prof / 2, cy, 0));
+    g.add(box(prof, op.h, dp, fr, x1 - prof / 2, cy, 0));
+    g.add(box(op.w, prof, dp, fr, cx, top - prof / 2, 0));
+    g.add(box(op.w, kind === 'glass' && sill > 0 ? prof : 0.02, dp, fr, cx, sill + (kind === 'glass' && sill > 0 ? prof / 2 : 0.01), 0));
+    // skrzydło (cofnięte, węższe) – daje plastyczny profil zamiast płaskiej ramki
+    const sw = op.w - 2 * prof, sh = op.h - 2 * prof;
+    if (sw > 0.2 && sh > 0.2 && op.frame !== 'thin') {
+      g.add(box(sashP, sh, sashD, fr, x0 + prof + sashP / 2, cy, inset));
+      g.add(box(sashP, sh, sashD, fr, x1 - prof - sashP / 2, cy, inset));
+      g.add(box(sw, sashP, sashD, fr, cx, top - prof - sashP / 2, inset));
+      g.add(box(sw, sashP, sashD, fr, cx, sill + prof + sashP / 2, inset));
+      // listwa przyszybowa (cieńsza, jeszcze głębiej)
+      const gw = sw - 2 * sashP, gh = sh - 2 * sashP;
+      if (gw > 0.1 && gh > 0.1) {
+        const bd = 0.016;
+        g.add(box(bd, gh, bd, fr, x0 + prof + sashP + bd / 2, cy, inset + sashD / 2));
+        g.add(box(bd, gh, bd, fr, x1 - prof - sashP - bd / 2, cy, inset + sashD / 2));
+        g.add(box(gw, bd, bd, fr, cx, top - prof - sashP - bd / 2, inset + sashD / 2));
+        g.add(box(gw, bd, bd, fr, cx, sill + prof + sashP + bd / 2, inset + sashD / 2));
+      }
+    }
+    for (const mx of op.mullions || []) { g.add(box(0.05, op.h, dp, fr, x0 + mx, cy, 0)); g.add(box(0.032, sh, sashD, fr, x0 + mx, cy, inset)); }
   };
   if (['door', 'glassdoor', 'opening', 'slider'].includes(op.kind)) { const th = mesh(new THREE.BoxGeometry(op.w, 0.03, t + 0.02), M.frame, { cast: false }); th.position.set(cx, 0.005, 0); g.add(th); }
   if (op.kind === 'glass' && sill > 0.2) {
@@ -778,6 +799,7 @@ function applySky(force = false) {
   lampFactor.v = lf;
   for (const { light, base } of lights) light.intensity = base * 0.42 * lf;
   for (const [m, b] of emissives) m.emissiveIntensity = b * (0.06 + 0.94 * lf);
+  if (bloom) bloom.strength = 0.16 + 0.3 * lf;
   // env map (odbicia) — z opóźnieniem, żeby suwak nie dławił GPU
   envTimer = force ? 0 : 0.15; if (force) rebuildEnv();
   ui.sunInfo(elDeg, az / DEG);
@@ -876,7 +898,7 @@ function setOrientation() {
 }
 
 // ======================================================================= post-processing
-let composer, gtao;
+let composer, gtao, bloom;
 function setupPost() {
   const rt = new THREE.WebGLRenderTarget(innerWidth, innerHeight, { samples: 4, type: THREE.HalfFloatType });
   composer = new EffectComposer(renderer, rt);
@@ -886,12 +908,14 @@ function setupPost() {
   gtao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 4, radiusExponent: 1, rings: 2, samples: 12 });
   gtao.blendIntensity = 1.0;
   composer.addPass(gtao);
+  bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.22, 0.75, 0.92);
+  composer.addPass(bloom);
   composer.addPass(new OutputPass());
   setQuality();
 }
 function setQuality() {
   const hi = state.quality === 'high';
-  gtao.enabled = hi; renderer.setPixelRatio(Math.min(devicePixelRatio, hi ? 2 : 1.25));
+  gtao.enabled = hi; if (bloom) bloom.enabled = hi; renderer.setPixelRatio(Math.min(devicePixelRatio, hi ? 2 : 1.25));
   sun.shadow.mapSize.set(hi ? 4096 : 2048, hi ? 4096 : 2048); if (sun.shadow.map) { sun.shadow.map.dispose(); sun.shadow.map = null; }
   onResize();
 }
@@ -962,6 +986,7 @@ async function main() {
   if (HOUSE.mirror) HOUSE = mirrorHouse(HOUSE);
   H = HOUSE.ceiling;
   defineMaterials();
+  registerShapes({ THREE, RoundedBoxGeometry, M, E, F, mesh, box, rbox, cyl, std, mulberry, ceilH: () => H });
   buildFloors(); buildCeilings(); for (const w of HOUSE.walls) buildWall(w); buildBoxes(); buildRoof(); buildFurniture(); buildLights(); buildSite();
   checkPassages();
   setupPost(); initUI();
@@ -972,5 +997,5 @@ async function main() {
   $('#loading').hidden = true;
   animate();
 }
-window.__app = { moveTo, resolveCollision, checkPassages, pos: () => worldToPlan(camera.position), walk: (dx, dy, n = 40) => { let p = worldToPlan(camera.position); for (let i = 0; i < n; i++) { p = resolveCollision(p.x + dx, p.y + dy); } camera.position.copy(planToWorld(p.x, p.y, eyeZ + EYE)); return p; } };
+window.__app = { scene, house, moveTo, resolveCollision, checkPassages, pos: () => worldToPlan(camera.position), walk: (dx, dy, n = 40) => { let p = worldToPlan(camera.position); for (let i = 0; i < n; i++) { p = resolveCollision(p.x + dx, p.y + dy); } camera.position.copy(planToWorld(p.x, p.y, eyeZ + EYE)); return p; } };
 main().catch((e) => { console.error(e); $('#loading').textContent = 'Błąd: ' + e.message; });
