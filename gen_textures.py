@@ -393,3 +393,27 @@ def plaster_dark():
 
 if __name__ == '__main__':
     patagonia(); wenge(); limestone(); cedar(); plaster_dark(); print('hk168 tex')
+
+
+# ---------------------------------------------------------------- Calacatta (biel, delikatne szare żyły)
+def calacatta():
+    warp = fbm(N, 6, 5, 303)
+    n1 = fbm(N, 3, 6, 301, ax=2.0, ay=1)
+    field = n1*1.8 + warp*0.5
+    band = np.abs(np.sin(field*np.pi*1.4))
+    wmod = norm01(fbm(N, 4, 3, 305))
+    main = np.clip(1 - band*(9 + 14*wmod), 0, 1)**1.2           # cienkie główne żyły
+    halo = np.clip(1 - band*(3.0 + 2.5*wmod), 0, 1)**2.6
+    n2 = fbm(N, 5, 6, 307, ax=2.0, ay=1)
+    fine = np.clip(1 - np.abs(np.sin((n2*3.0 + warp*0.3)*np.pi*2.0))*(22+14*norm01(fbm(N, 5, 3, 309))), 0, 1)**1.3
+    bg = 247 - 4*norm01(fbm(N, 6, 4, 311))
+    img = np.stack([bg, bg, bg-1], -1)
+    def mix(im, a, c):
+        a = np.clip(a, 0, 1)[..., None]; return im*(1-a) + np.array(c, float)*a
+    img = mix(img, halo*0.22, (214, 214, 212))
+    img = mix(img, fine*0.45, (168, 168, 166))
+    img = mix(img, main*0.8, (118, 120, 122))
+    save('calacatta.jpg', img, 92)
+
+if __name__ == '__main__':
+    calacatta(); print('calacatta')

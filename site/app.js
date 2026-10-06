@@ -84,12 +84,15 @@ function defineMaterials() {
   M.plaster_dark = std({ map: tex('plaster_dark.jpg', { tile: 2.5 }), normalMap: tex('plaster_n.jpg', { srgb: false, tile: 2 }), normalScale: new THREE.Vector2(0.35, 0.35), roughness: 0.85 });
   M.plaster_warm = std({ color: 0xece4d6, roughness: 0.92, map: tex('plaster.jpg', { tile: 2 }), normalMap: tex('plaster_n.jpg', { srgb: false, tile: 2 }), normalScale: new THREE.Vector2(0.3, 0.3) });
   M.ceiling_warm = std({ color: 0xf6f1e7, roughness: 0.96 });
+  M.concrete_dark = std({ map: tex('concrete.jpg', { tile: 1.6 }), color: 0x5a5a5c, roughness: 0.45, envMapIntensity: 0.5 });
+  M.lacobel = std({ color: 0xf4f4f2, roughness: 0.08, metalness: 0.1, envMapIntensity: 1.1 });
   M.stone_beige = std({ color: 0xd9cdb8, roughness: 0.35, envMapIntensity: 0.6 });
   M.brass = std({ color: 0xb08a52, roughness: 0.28, metalness: 0.95, envMapIntensity: 1.2 });
   M.fabric_cream = std({ map: tex('fabric.jpg', { tile: 0.45 }), normalMap: tex('fabric_n.jpg', { srgb: false, tile: 0.45 }), normalScale: new THREE.Vector2(0.6, 0.6), roughness: 1.0, color: 0xeee6d6 });
   M.fabric_sand = std({ map: tex('fabric.jpg', { tile: 0.45 }), roughness: 1.0, color: 0xcdbda4 });
   M.rooftile = std({ map: tex('rooftile.jpg', { tile: 1.2 }), normalMap: tex('rooftile_n.jpg', { srgb: false, tile: 1.2 }), normalScale: new THREE.Vector2(0.8, 0.8), roughness: 0.75 });
-  M.marble_wall = std({ map: tex('marble.jpg', { tile: 1.6 }), roughness: 0.2, envMapIntensity: 0.7 });
+  M.marble_wall = std({ map: tex('calacatta.jpg', { tile: 2.6 }), roughness: 0.14, envMapIntensity: 0.8 });
+  M.calacatta = std({ map: tex('calacatta.jpg', { tile: 1.8 }), roughness: 0.12, envMapIntensity: 0.9 });
   M.white_gloss = std({ color: 0xf2f1ee, roughness: 0.25, envMapIntensity: 0.8 });
   M.stone_top = std({ color: 0x2a2b2d, roughness: 0.35, envMapIntensity: 0.6 });
   M.fabric = std({ map: tex('fabric.jpg', { tile: 0.5 }), normalMap: tex('fabric_n.jpg', { srgb: false, tile: 0.5 }), normalScale: new THREE.Vector2(0.5, 0.5), roughness: 1.0, color: 0xf2ece2 });
@@ -506,6 +509,37 @@ F.panelBed = ({ w = 1.9, d = 2.1 }) => { const g = new THREE.Group();
   g.userData.collide = [w + 0.5, d + 0.9]; return g; };
 F.stoneStrip = ({ w = 3.0, h = 0.8, z = 0.6 }) => { const g = new THREE.Group(); g.add(box(w, h, 0.03, M.patagonia_s, 0, z, 0.015)); return g; };
 F.fluteWall = ({ w = 3.0, h = 2.4, z = 0 }) => { const g = new THREE.Group(); g.add(box(w, h, 0.04, M.wenge_fluted, 0, z + h / 2, 0.02)); return g; };
+F.tvNiche = ({ w = 3.9, h = 2.45, nw = 2.3, nh = 1.45, z = 1.45, slat = 'walnut_fluted' }) => {
+  const g = new THREE.Group(); const d = 0.05;
+  // ściana z pionowych lameli z wyciętą wnęką wyłożoną marmurem
+  const side = (w - nw) / 2;
+  g.add(box(side, h, d, M[slat], -(nw + side) / 2, h / 2, d / 2));
+  g.add(box(side, h, d, M[slat], (nw + side) / 2, h / 2, d / 2));
+  g.add(box(nw, h - z - nh / 2, d, M[slat], 0, (h + z + nh / 2) / 2, d / 2));
+  g.add(box(nw, z - nh / 2, d, M[slat], 0, (z - nh / 2) / 2, d / 2));
+  g.add(box(nw, nh, 0.02, M.marble, 0, z, 0.012));
+  for (const s of [-1, 1]) { const e = mesh(new THREE.BoxGeometry(nw, 0.012, 0.012), E('led'), { cast: false, receive: false }); e.position.set(0, z + s * (nh / 2 - 0.01), 0.05); g.add(e); }
+  for (const s of [-1, 1]) { const e = mesh(new THREE.BoxGeometry(0.012, nh, 0.012), E('led'), { cast: false, receive: false }); e.position.set(s * (nw / 2 - 0.01), z, 0.05); g.add(e); }
+  g.add(box(nw * 0.82, nw * 0.82 * 0.5, 0.035, M.tv, 0, z, 0.07));
+  g.add(rbox(w * 0.62, 0.38, 0.42, M.wenge, 0, 0.3, 0.21, 0.01));                      // szafka RTV
+  g.add(box(0.008, 0.34, 0.01, M.stone_dark, 0, 0.3, 0.42));
+  return g; };
+F.plantRack = ({ w = 1.6, z = 1.95 }) => { const g = new THREE.Group();
+  for (let i = 0; i < 2; i++) { const zz = z + i * 0.3, ww = w - i * 0.3;
+    g.add(box(ww, 0.02, 0.4, M.black_metal, 0, zz, 0));
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) g.add(cyl(0.008, 0.008, 0.3, M.black_metal, sx * (ww / 2 - 0.02), zz + 0.15, sz * 0.19, 6));
+    g.add(box(ww - 0.2, 0.12, 0.26, M.black_metal, 0, zz + 0.08, 0));
+    const rnd = mulberry(53 + i);
+    for (let k = 0; k < 6; k++) { const s = mesh(new THREE.SphereGeometry(0.07 + rnd() * 0.05, 8, 6), M.leaf); s.scale.set(1, 0.7, 1); s.position.set(-ww / 2 + 0.2 + k * (ww - 0.4) / 5, zz + 0.2, (rnd() - 0.5) * 0.14); g.add(s); } }
+  for (const sx of [-1, 1]) g.add(cyl(0.01, 0.01, H - z - 0.3, M.black_metal, sx * (w / 2 - 0.05), (H + z + 0.3) / 2 - 0.15, 0, 6));
+  return g; };
+F.glassTable = ({ w = 1.2, d = 0.7 }) => { const g = new THREE.Group();
+  const top = mesh(new THREE.BoxGeometry(w, 0.015, d), M.glass, { cast: false }); top.position.y = 0.4; g.add(top);
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) g.add(cyl(0.012, 0.012, 0.4, M.black_metal, sx * (w / 2 - 0.08), 0.2, sz * (d / 2 - 0.08), 8));
+  g.add(box(w - 0.2, 0.012, 0.012, M.black_metal, 0, 0.06, d / 2 - 0.08)); g.add(box(w - 0.2, 0.012, 0.012, M.black_metal, 0, 0.06, -(d / 2 - 0.08)));
+  g.add(box(0.26, 0.04, 0.2, std({ color: 0xe6e1d6, roughness: 0.9 }), -w * 0.2, 0.43, 0));
+  g.add(cyl(0.05, 0.045, 0.07, M.ceramic, w * 0.25, 0.44, 0.05, 20)); return g; };
+F.woodColumn = ({ w = 0.4, d = 0.5, mat = 'walnut' }) => { const g = new THREE.Group(); g.add(box(w, H, d, M[mat], 0, H / 2, 0)); g.userData.collide = [w, d]; return g; };
 F.pendant = ({ r, z }) => { const g = new THREE.Group(); const shade = mesh(new THREE.CylinderGeometry(0.06, r, 0.34, 40, 1, true), std({ color: 0xf1ede4, roughness: 1, side: THREE.DoubleSide }), { cast: false });
   shade.position.y = z; g.add(shade); const cap = cyl(0.06, 0.06, 0.02, M.white_matte, 0, z + 0.17, 0); g.add(cap); g.add(cyl(0.004, 0.004, H - z - 0.18, M.black_metal, 0, (H + z + 0.18) / 2 - 0.09, 0, 6)); g.add(cyl(0.06, 0.06, 0.02, M.white_matte, 0, H - 0.02, 0));
   const bulb = mesh(new THREE.SphereGeometry(0.035, 16, 12), E('warm'), { cast: false, receive: false }); bulb.position.y = z - 0.02; g.add(bulb); return g; };
@@ -586,6 +620,61 @@ function buildFurniture() {
   }
 }
 
+function checkPassages() {
+  const bad = [];
+  for (const p of passages) { const nx = -p.uy, ny = p.ux;
+    for (const s of [-1, 1]) { const qx = p.x + nx * s * 0.7, qy = p.y + ny * s * 0.7;
+      for (const r of colRects) if (qx > r[0] - 0.15 && qx < r[2] + 0.15 && qy > r[1] - 0.15 && qy < r[3] + 0.15)
+        bad.push(`przejście ${p.x.toFixed(2)},${p.y.toFixed(2)} ← ${r.map((v) => +v.toFixed(2)).join(',')}`); } }
+  for (const b of bad) console.warn('Przejście zasłonięte:', b);
+  return bad;
+}
+function mirrorHouse(src) {
+  const h = structuredClone(src);
+  const b = h.mirrorBounds || h.mapBounds || [0, 0, 1, 1];
+  const m = b[0] + b[2];                                  // oś odbicia: x' = m - x
+  const mx = (v) => m - v;
+  const rect = (r) => { const t = [mx(r[2]), r[1], mx(r[0]), r[3]]; r[0] = t[0]; r[1] = t[1]; r[2] = t[2]; r[3] = t[3]; };
+  const flipLR = (v) => (v === 'L' ? 'R' : v === 'R' ? 'L' : v);
+  const flipFace = (f) => (f === 'x0' ? 'x1' : f === 'x1' ? 'x0' : f);
+  for (const r of h.rooms || []) { rect(r.rect); r.spawn[0] = mx(r.spawn[0]); r.look[0] = -r.look[0]; }
+  for (const f of [...(h.floors || []), ...(h.ceilings || []), ...(h.roof || [])]) rect(f.rect);
+  for (const p of h.roofHip || []) rect(p.rect);
+  if (h.roofHole) rect(h.roofHole);
+  for (const w of h.walls) {
+    const a0 = [mx(w.a[0]), w.a[1]], b0 = [mx(w.b[0]), w.b[1]];
+    w.a = b0; w.b = a0;                                   // zamiana końców zachowuje stronę matL/matR
+    const L = Math.hypot(w.b[0] - w.a[0], w.b[1] - w.a[1]);
+    for (const op of w.openings || []) {
+      op.at = L - op.at - op.w;
+      if (op.swing) op.swing = flipLR(op.swing);
+      if (op.fixed) op.fixed = flipLR(op.fixed);
+      if (op.mullions) op.mullions = op.mullions.map((v) => op.w - v).reverse();
+    }
+  }
+  for (const bx of h.boxes || []) {
+    rect(bx.rect);
+    if (bx.doors) bx.doors = flipFace(bx.doors);
+    if (bx.ovenFace) bx.ovenFace = flipFace(bx.ovenFace);
+    if (bx.ovens) bx.ovens = bx.ovens.map(([p, q]) => (bx.ovenFace && bx.ovenFace[0] === 'y' ? [mx(q), mx(p)] : [p, q]));
+  }
+  for (const f of h.furniture || []) { f.x = mx(f.x); if (f.rot) f.rot = -f.rot; if (f.dir) f.dir = [-f.dir[0], f.dir[1]]; }
+  for (const l of h.lights || []) { l.x = mx(l.x); if (l.tx != null) l.tx = mx(l.tx); }
+  if (h.site) {
+    const s = h.site;
+    if (s.lawn) rect(s.lawn);
+    if (s.fence) rect(s.fence.rect);
+    if (s.pool) rect(s.pool.rect);
+    if (s.poolDeck) rect(s.poolDeck);
+    s.trees = (s.trees || []).map(([x, y, r]) => [mx(x), y, r]);
+    s.shrubs = (s.shrubs || []).map(([x, y, r]) => [mx(x), y, r]);
+  }
+  if (h.center) h.center[0] = mx(h.center[0]);
+  if (h.mapBounds) rect(h.mapBounds);
+  if (h.bounds) rect(h.bounds);
+  h.entranceSide = h.entranceSide === 'E' ? 'W' : h.entranceSide === 'W' ? 'E' : h.entranceSide;
+  return h;
+}
 function kelvin(k) { return { 2200: 0xffb060, 2400: 0xffbe72, 2700: 0xffcf8e, 3000: 0xffd9a6, 3500: 0xffe5c0, 4000: 0xffefd8 }[k] || 0xffd9a6; }
 function buildLights() {
   for (const l of HOUSE.lights) {
@@ -860,11 +949,12 @@ async function main() {
   const id = hp || saved || 'hk88';
   if (hs) { hs.value = id; if (hs.value !== id) hs.value = 'hk88'; hs.addEventListener('change', () => { try { localStorage.setItem('house', hs.value); } catch (e) {} location.hash = 'house=' + hs.value; location.reload(); }); }
   const cb = new URLSearchParams(location.search).get('v');
-  HOUSE = (await import(`./${id}.js` + (cb ? `?v=${cb}` : ''))).default; H = HOUSE.ceiling;
+  HOUSE = (await import(`./${id}.js` + (cb ? `?v=${cb}` : ''))).default;
+  if (HOUSE.mirror) HOUSE = mirrorHouse(HOUSE);
+  H = HOUSE.ceiling;
   defineMaterials();
   buildFloors(); buildCeilings(); for (const w of HOUSE.walls) buildWall(w); buildBoxes(); buildRoof(); buildFurniture(); buildLights(); buildSite();
-  // kontrola: meble/zabudowy blokujące przejścia (log w konsoli)
-  for (const p of passages) { const nx = -p.uy, ny = p.ux; for (const s of [-1, 1]) { const qx = p.x + nx * s * 0.7, qy = p.y + ny * s * 0.7; for (const r of colRects) if (qx > r[0] - 0.15 && qx < r[2] + 0.15 && qy > r[1] - 0.15 && qy < r[3] + 0.15) console.warn('Przejście zasłonięte', p.x.toFixed(2), p.y.toFixed(2), 'przez', r.map((v) => +v.toFixed(2)).join(',')); } }
+  checkPassages();
   setupPost(); initUI();
   state.orient = 'W'; setOrientation(); document.querySelector('#orient button[data-d="W"]').classList.add('on');
   moveTo(HOUSE.start.room);
@@ -873,5 +963,5 @@ async function main() {
   $('#loading').hidden = true;
   animate();
 }
-window.__app = { moveTo, resolveCollision, pos: () => worldToPlan(camera.position), walk: (dx, dy, n = 40) => { let p = worldToPlan(camera.position); for (let i = 0; i < n; i++) { p = resolveCollision(p.x + dx, p.y + dy); } camera.position.copy(planToWorld(p.x, p.y, eyeZ + EYE)); return p; } };
+window.__app = { moveTo, resolveCollision, checkPassages, pos: () => worldToPlan(camera.position), walk: (dx, dy, n = 40) => { let p = worldToPlan(camera.position); for (let i = 0; i < n; i++) { p = resolveCollision(p.x + dx, p.y + dy); } camera.position.copy(planToWorld(p.x, p.y, eyeZ + EYE)); return p; } };
 main().catch((e) => { console.error(e); $('#loading').textContent = 'Błąd: ' + e.message; });

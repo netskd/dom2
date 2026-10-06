@@ -31,11 +31,11 @@ export default {
     { id: 'pralnia', name: '7 · Pralnia', rect: [10.9, 15.05, 13.27, 17.41], spawn: [12.7, 16.2], look: [-1, 0.2] },
     { id: 'pokoj1', name: '8 · Pokój', rect: [10.71, 17.51, 14.0, 21.52], spawn: [13.5, 18.2], look: [-0.6, 0.8] },
     { id: 'pokoj2', name: '9 · Pokój', rect: [15.0, 17.51, 18.3, 21.52], spawn: [15.5, 18.2], look: [0.6, 0.8] },
-    { id: 'lazienka', name: '10 · Łazienka', rect: [14.45, 15.05, 18.3, 17.41], spawn: [14.9, 15.6], look: [1, 0.2] },
+    { id: 'lazienka', name: '10 · Łazienka', rect: [14.45, 15.05, 18.3, 17.41], spawn: [16.6, 16.0], look: [0.15, 0.99] },
     { id: 'pokoj3', name: '11 · Pokój', rect: [14.45, 11.7, 18.3, 14.96], spawn: [14.9, 13.0], look: [1, 0.2] },
-    { id: 'sypialnia', name: '12 · Pokój (sypialnia)', rect: [15.0, 6.55, 18.3, 11.5], spawn: [15.4, 10.0], look: [0.6, -0.8] },
+    { id: 'sypialnia', name: '12 · Sypialnia', rect: [15.0, 6.55, 18.3, 11.5], spawn: [16.6, 10.6], look: [0.05, -1] },
     { id: 'garderoba2', name: '13 · Garderoba', rect: [12.9, 6.55, 15.0, 8.4], spawn: [14.5, 10.8], look: [-0.2, -1] },
-    { id: 'lazienka2', name: '14 · Łazienka', rect: [11.8, 8.6, 14.0, 11.2], spawn: [13.7, 10.0], look: [-1, -0.3] },
+    { id: 'lazienka2', name: '14 · Łazienka', rect: [11.8, 8.6, 14.0, 11.2], spawn: [12.9, 10.1], look: [0, -1] },
     { id: 'toaleta', name: '15 · Toaleta', rect: [10.3, 8.6, 11.7, 10.0], spawn: [11.0, 10.6], look: [0, -1] },
     { id: 'kotlownia', name: '16 · Kotłownia', rect: [10.3, 6.55, 12.9, 8.4], spawn: [11.0, 7.0], look: [1, 0.3] },
     { id: 'garaz', name: '17 · Garaż', rect: [10.3, 0.45, 18.3, 6.55], spawn: [10.9, 6.0], look: [0.8, -0.6] },
@@ -50,9 +50,9 @@ export default {
     { rect: [10.0, 8.4, 14.45, 13.35], mat: 'tiles_light' },
     { rect: [13.27, 13.35, 15.77, 17.51], mat: 'tiles_light' },
     { rect: [10.9, 15.05, 13.27, 17.41], mat: 'tiles_light' },
-    { rect: [14.45, 15.05, 18.3, 17.41], mat: 'marble_wall' },
-    { rect: [11.8, 8.6, 14.0, 11.2], mat: 'marble_wall' },
-    { rect: [10.3, 8.6, 11.7, 10.0], mat: 'marble_wall' },
+    { rect: [14.45, 15.05, 18.3, 17.41], mat: 'slate' },
+    { rect: [11.8, 8.6, 14.0, 11.2], mat: 'slate' },
+    { rect: [10.3, 8.6, 11.7, 10.0], mat: 'slate' },
     { rect: [10.71, 17.51, 18.3, 21.52], mat: 'oak' },
     { rect: [14.45, 11.7, 18.3, 14.96], mat: 'oak' },
     { rect: [15.0, 6.55, 18.3, 11.5], mat: 'oak' },
@@ -98,7 +98,7 @@ export default {
     ] }),
     W([18.7, 0.2], [9.75, 0.2], 0.4, { ...EXT, matL: 'sinter', openings: [
       { at: 0.6, w: 0.8, h: 2.2, kind: 'door', leaf: 'entry', open: 0 },
-      { at: 2.85, w: 5.0, h: 2.38, kind: 'garagedoor' },
+      { at: 2.85, w: 5.0, h: 2.38, kind: 'garagedoor', mat: 'wardrobe_dark' },
     ] }),
     W([10.0, 0.0], [10.0, 7.5], 0.5, { ...EXT, matL: 'sinter' }),
     W([10.2, 7.5], [0.0, 7.5], 0.4, { ...EXT, openings: [
@@ -145,17 +145,25 @@ export default {
   ],
 
   boxes: [
-    { rect: [0.4, 9.5, 1.0, 12.15], h: 2.5, mat: 'walnut', doors: 'x1', ovens: [[10.4, 11.4]], ovenFace: 'x1' },   // wysoka zabudowa z piekarnikami
+    { rect: [2.44, 9.72, 2.52, 11.98], h: 0.86, mat: 'walnut_fluted' },                            // lamelowy bok wyspy
+    { rect: [14.45, 15.05, 18.3, 15.17], h: H, mat: 'marble_wall' },                              // łazienka 10 – marmur
+    { rect: [18.18, 15.05, 18.3, 17.41], h: H, mat: 'marble_wall' },
+    { rect: [11.75, 8.6, 11.87, 11.2], h: H, mat: 'marble_wall' },                                // łazienka 14 – marmur
+    { rect: [11.87, 11.08, 14.0, 11.2], h: H, mat: 'marble_wall' },
+    { rect: [16.55, 15.17, 18.25, 16.07], h: 0.56, mat: 'marble_wall' },                           // wanna zabudowana (obudowa)
+
+    { rect: [0.4, 9.5, 1.0, 12.15], h: 2.6, mat: 'wenge', doors: 'x1', ovens: [[10.4, 11.4]], ovenFace: 'x1' },   // wysoka zabudowa z piekarnikami
     { rect: [1.0, 7.7, 6.4, 8.3], h: 0.86, mat: 'white_gloss', doors: 'y1' },                     // szafki dolne
-    { rect: [0.98, 7.68, 6.42, 8.32], z: 0.86, h: 0.04, mat: 'stone_top' },
+    { rect: [0.98, 7.68, 6.42, 8.32], z: 0.86, h: 0.04, mat: 'concrete_dark' },
     { rect: [0.4, 8.3, 1.0, 9.5], h: 0.86, mat: 'white_gloss', doors: 'x1' },
-    { rect: [0.38, 8.28, 1.02, 9.52], z: 0.86, h: 0.04, mat: 'stone_top' },
-    { rect: [4.4, 7.7, 6.4, 8.05], z: 1.45, h: 1.05, mat: 'walnut', doors: 'y1' },               // szafki górne
-    { rect: [4.55, 9.9, 5.15, 12.15], h: H, mat: 'walnut', doors: 'x0' },                        // kolumna zabudowy (lodówka)
+    { rect: [0.38, 8.28, 1.02, 9.52], z: 0.86, h: 0.04, mat: 'concrete_dark' },
+    { rect: [1.0, 8.05, 6.4, 8.3], z: 0.90, h: 0.62, mat: 'lacobel' },                            // panel ścienny nad blatem (lacobel)
+    { rect: [4.4, 7.7, 6.4, 8.05], z: 1.52, h: 0.98, mat: 'wenge', doors: 'y1' },                // szafki górne
+    { rect: [4.55, 9.9, 5.15, 12.15], h: H, mat: 'wenge', doors: 'x0' },                          // kolumna zabudowy (lodówka)
     { rect: [5.25, 11.3, 7.5, 12.1], h: H, mat: 'wardrobe_dark', doors: 'y0' },                  // szafa w niszy wiatrołapu
     { rect: [5.4, 12.3, 6.6, 12.34], h: H, mat: 'marble_wall' },                                  // ściana kominka (marmur)
     { rect: [6.6, 12.3, 7.65, 12.34], h: H, mat: 'walnut_fluted' },                               // lamele między kominkiem a drzwiami
-    { rect: [8.75, 12.3, 10.05, 12.34], h: H, mat: 'walnut_fluted' },                              // ściana TV (lamele)
+    { rect: [7.95, 12.28, 10.05, 12.34], h: H, mat: 'walnut_fluted' },                             // ściana TV (lamele)
     { rect: [10.1, 13.0, 10.4, 18.6], h: H, mat: 'walnut', doors: 'x0' },                         // zabudowa przy wschodniej ścianie salonu
     { rect: [15.0, 10.6, 15.6, 11.45], h: H, mat: 'walnut', doors: 'x1' },                        // szafa sypialnia
     { rect: [14.6, 11.75, 18.3, 12.35], h: H, mat: 'walnut', doors: 'y1' },                       // szafa pokój 11
@@ -177,9 +185,12 @@ export default {
 
   furniture: [
     // kuchnia i jadalnia
-    { type: 'island', x: 3.1, y: 10.85, rot: 0, w: 1.2, d: 2.3, body: 'white_gloss', top: 'stone_top' },
+    { type: 'island', x: 3.1, y: 10.85, rot: 0, w: 1.2, d: 2.3, body: 'concrete_dark', top: 'concrete_dark' },
+    { type: 'plantRack', x: 3.3, y: 8.15, rot: 0, w: 1.9, z: 1.75 },
     { type: 'stools', x: 4.05, y: 10.85, rot: -90, n: 3 },
-    { type: 'pendantBlack', x: 3.1, y: 10.2, z: 1.75, r: 0.12, h: 0.3 }, { type: 'pendantBlack', x: 3.1, y: 11.5, z: 1.75, r: 0.12, h: 0.3 },
+    { type: 'pendantBlack', x: 3.1, y: 10.2, z: 1.72, r: 0.11, h: 0.28 }, { type: 'pendantBlack', x: 3.1, y: 11.5, z: 1.72, r: 0.11, h: 0.28 },
+    { type: 'linear', x: 3.1, y: 8.2, rot: 0, len: 1.4 },
+    { type: 'bottles', x: 1.6, y: 7.95, rot: 180, z: 0.92 }, { type: 'decorIsland', x: 3.1, y: 10.85, rot: 90 },
     { type: 'rectTable', x: 2.0, y: 14.2, rot: 0, w: 2.8, d: 1.0, top: 'walnut' },
     { type: 'chair', x: 1.3, y: 15.05, rot: 0 }, { type: 'chair', x: 2.0, y: 15.05, rot: 0 }, { type: 'chair', x: 2.7, y: 15.05, rot: 0 },
     { type: 'chair', x: 1.3, y: 13.35, rot: 180 }, { type: 'chair', x: 2.0, y: 13.35, rot: 180 }, { type: 'chair', x: 2.7, y: 13.35, rot: 180 },
@@ -190,15 +201,19 @@ export default {
     // salon
     { type: 'rug', x: 8.0, y: 16.0, w: 3.0, d: 3.4 },
     { type: 'sofa', x: 9.4, y: 16.4, rot: -90, w: 3.4, d: 1.05 },
-    { type: 'sofa', x: 8.6, y: 18.3, rot: 0, w: 1.8, d: 1.0 },
-    { type: 'coffeeTable', x: 7.5, y: 16.2, r: 0.55 },
-    { type: 'tvUnit', x: 9.4, y: 12.58, rot: 0, w: 1.2 },
-    { type: 'tv', x: 9.4, y: 12.36, rot: 0, w: 1.15, z: 1.3 },
+    { type: 'sofa', x: 6.5, y: 18.3, rot: 0, w: 1.8, d: 1.0 },
+    { type: 'glassTable', x: 7.5, y: 16.2, rot: 0, w: 1.3, d: 0.75 },
+    { type: 'woodColumn', x: 10.4, y: 12.6, rot: 0, w: 0.5, d: 0.5, mat: 'walnut' },
+    { type: 'tvNiche', x: 9.0, y: 12.28, rot: 180, w: 2.05, h: 2.5, nw: 1.5, nh: 1.0, z: 1.35 },
     { type: 'fireplace', x: 6.0, y: 12.37, rot: 180, w: 1.0 },
     { type: 'plant', x: 5.5, y: 18.3, s: 1.5 },
     { type: 'floorLamp', x: 5.6, y: 13.0 },
     { type: 'curtain', x: 5.6, y: 18.85, rot: 0, w: 0.8, tone: 'light' }, { type: 'curtain', x: 10.3, y: 18.85, rot: 0, w: 0.6, tone: 'light' },
     { type: 'track', x: 6.2, y: 13.2, rot: 90, len: 5.4, spots: [0.6, 2.2, 3.8, 5.0] },
+    { type: 'track', x: 8.6, y: 13.6, rot: 90, len: 4.2, spots: [0.5, 1.8, 3.2] },
+    { type: 'books', x: 7.5, y: 16.2, z: 0.42 },
+    { type: 'plant', x: 10.0, y: 18.4, s: 1.2 },
+    { type: 'shelfWall', x: 10.38, y: 15.6, rot: -90, w: 0.9, z: 1.65 },
     { type: 'downlight', x: 2.0, y: 9.0 }, { type: 'downlight', x: 2.0, y: 11.6 }, { type: 'downlight', x: 8.5, y: 14.0 },
     { type: 'painting', x: 10.38, y: 13.6, rot: -90, w: 0.9, h: 1.1, z: 1.5 },
     // wiatrołap, hol
@@ -208,28 +223,37 @@ export default {
     { type: 'painting', x: 12.4, y: 13.25, rot: 0, w: 1.0, h: 1.2, z: 1.45 },
     { type: 'downlight', x: 8.8, y: 10.0 }, { type: 'downlight', x: 12.4, y: 12.3 }, { type: 'downlight', x: 14.5, y: 15.5 },
     // sypialnia 12 (17,84) + garderoba 13 + łazienka 14
-    { type: 'bed', x: 16.7, y: 7.8, rot: 180, w: 1.8, d: 2.1 },
+    { type: 'fluteWall', x: 16.7, y: 6.87, rot: 0, w: 3.0, h: 2.5 },
+    { type: 'bed', x: 16.7, y: 7.85, rot: 180, w: 1.8, d: 2.1 },
+    { type: 'rug', x: 16.7, y: 9.0, w: 3.0, d: 2.4 },
     { type: 'nightstand', x: 15.5, y: 7.0, r: 0.25 }, { type: 'nightstand', x: 17.9, y: 7.0, r: 0.25 },
     { type: 'armchair', x: 17.6, y: 10.7, rot: -150 },
     { type: 'wallSpot', x: 16.2, y: 6.65, z: 2.7 }, { type: 'wallSpot', x: 17.2, y: 6.65, z: 2.7 },
-    { type: 'vanity', x: 12.9, y: 8.62, rot: 180, w: 1.4, basins: 1 }, { type: 'mirror', x: 12.9, y: 8.58, rot: 180, w: 1.4, h: 0.8, z: 1.7 },
+    { type: 'vanityStone', x: 12.9, y: 8.64, rot: 180, w: 1.5, basins: 1 }, { type: 'mirrorLed', x: 12.9, y: 8.68, rot: 180, w: 1.5, h: 0.85, z: 1.78 },
+    { type: 'towels', x: 12.3, y: 8.4, rot: 180, z: 1.02 }, { type: 'towelRail', x: 11.82, y: 10.2, rot: 90, z: 1.05 },
     { type: 'toilet', x: 12.4, y: 11.1, rot: 0 }, { type: 'shower', x: 13.7, y: 10.8 },
     { type: 'slats', x: 11.85, y: 9.9, rot: 90, len: 1.6 },
     { type: 'downlight', x: 12.9, y: 9.9 },
     // toaleta 15
     { type: 'toilet', x: 11.0, y: 8.75, rot: 180 }, { type: 'vanity', x: 10.33, y: 9.5, rot: 90, w: 0.6, basins: 1 },
     // pokój 11
-    { type: 'singleBed', x: 17.8, y: 13.3, rot: 0 }, { type: 'desk', x: 16.0, y: 14.6, rot: 180 }, { type: 'chair', x: 16.0, y: 13.9, rot: 180 },
+    { type: 'fluteWall', x: 17.9, y: 11.74, rot: 0, w: 2.2, h: 2.4 },
+    { type: 'singleBed', x: 17.8, y: 12.9, rot: 0 }, { type: 'rug', x: 16.9, y: 13.6, w: 2.0, d: 1.6 }, { type: 'desk', x: 16.0, y: 14.6, rot: 180 }, { type: 'chair', x: 16.0, y: 13.9, rot: 180 },
     { type: 'downlight', x: 16.4, y: 13.3 },
     // łazienka 10
-    { type: 'bathtub', x: 17.5, y: 15.75, rot: 90, w: 1.7, d: 0.75 },
-    { type: 'vanity', x: 17.0, y: 17.2, rot: 0, w: 1.6, basins: 2 }, { type: 'mirror', x: 17.0, y: 17.36, rot: 0, w: 1.6, h: 0.8, z: 1.7 },
-    { type: 'toilet', x: 18.1, y: 16.6, rot: -90 }, { type: 'shower', x: 14.9, y: 15.5 },
+    { type: 'bathtub', x: 17.4, y: 15.62, rot: 0, w: 1.6, d: 0.85 },
+    { type: 'vanityStone', x: 16.7, y: 17.33, rot: 180, w: 1.9, basins: 2 }, { type: 'mirrorLed', x: 16.7, y: 17.38, rot: 180, w: 1.9, h: 0.9, z: 1.78 },
+    { type: 'towels', x: 15.9, y: 17.1, rot: 180, z: 1.02 }, { type: 'bottles', x: 17.4, y: 17.1, rot: 180, z: 1.02 },
+    { type: 'towelRail', x: 18.26, y: 16.45, rot: -90, z: 1.05 }, { type: 'plant', x: 15.9, y: 15.4, s: 0.7 },
+    { type: 'rug', x: 16.6, y: 16.6, w: 1.2, d: 0.8 },
+    { type: 'toilet', x: 18.05, y: 16.95, rot: -90 }, { type: 'shower', x: 15.0, y: 16.1 },
     { type: 'slats', x: 15.85, y: 16.8, rot: 90, len: 1.2 },
     { type: 'downlight', x: 16.3, y: 16.3 },
     // pokoje 8 i 9
-    { type: 'singleBed', x: 13.4, y: 19.6, rot: 0 }, { type: 'desk', x: 11.7, y: 21.15, rot: 180 }, { type: 'chair', x: 11.7, y: 20.5, rot: 180 },
-    { type: 'singleBed', x: 15.6, y: 19.6, rot: 0 }, { type: 'desk', x: 17.4, y: 21.15, rot: 180 }, { type: 'chair', x: 17.4, y: 20.5, rot: 180 },
+    { type: 'fluteWall', x: 13.4, y: 18.25, rot: 0, w: 2.2, h: 2.4 },
+    { type: 'singleBed', x: 13.4, y: 19.5, rot: 0 }, { type: 'rug', x: 12.2, y: 20.2, w: 2.0, d: 1.6 }, { type: 'desk', x: 11.7, y: 21.15, rot: 180 }, { type: 'chair', x: 11.7, y: 20.5, rot: 180 },
+    { type: 'fluteWall', x: 15.6, y: 18.25, rot: 0, w: 2.2, h: 2.4 },
+    { type: 'singleBed', x: 15.6, y: 19.5, rot: 0 }, { type: 'rug', x: 16.8, y: 20.2, w: 2.0, d: 1.6 }, { type: 'desk', x: 17.4, y: 21.15, rot: 180 }, { type: 'chair', x: 17.4, y: 20.5, rot: 180 },
     { type: 'downlight', x: 12.4, y: 19.5 }, { type: 'downlight', x: 16.6, y: 19.5 },
     // pralnia, garaż
     { type: 'washer', x: 11.3, y: 17.1, rot: 0 }, { type: 'washer', x: 11.95, y: 17.1, rot: 0 },
