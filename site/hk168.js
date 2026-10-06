@@ -136,12 +136,12 @@ export default {
 
     // ---- ściany wewnętrzne strefy nocnej
     W([3.48, -0.125], [3.48, 16.57], 0.12, { mat: 'plaster_warm', openings: [
-      { at: 0.95, w: 0.9, h: 2.4, kind: 'door', leaf: 'dark', open: 85, swing: 'L', into: 'L' },   // 5
-      { at: 3.45, w: 0.9, h: 2.4, kind: 'door', leaf: 'dark', open: 85, swing: 'L', into: 'L' },   // 6
-      { at: 7.0, w: 0.9, h: 2.4, kind: 'door', leaf: 'dark', open: 85, swing: 'L', into: 'L' },    // 7
-      { at: 9.6, w: 0.9, h: 2.4, kind: 'door', leaf: 'dark', open: 85, swing: 'L', into: 'L' },    // 8
-      { at: 12.3, w: 0.9, h: 2.4, kind: 'door', leaf: 'dark', open: 85, swing: 'L', into: 'L' },   // 10 (z master)
-      { at: 14.9, w: 1.1, h: 2.4, kind: 'opening' },                                               // 11 garderoba
+      { at: 0.60, w: 0.91, h: 2.4, kind: 'door', leaf: 'dark', open: 85, swing: 'L', into: 'L' },  // 5
+      { at: 3.53, w: 0.91, h: 2.4, kind: 'door', leaf: 'dark', open: 85, swing: 'L', into: 'L' },  // 6
+      { at: 7.11, w: 0.91, h: 2.4, kind: 'door', leaf: 'dark', open: 85, swing: 'L', into: 'L' },  // 7
+      { at: 9.46, w: 0.91, h: 2.4, kind: 'door', leaf: 'dark', open: 85, swing: 'L', into: 'L' },  // 8
+      { at: 12.63, w: 0.91, h: 2.4, kind: 'door', leaf: 'dark', open: 85, swing: 'L', into: 'L' }, // 10 (z master)
+      { at: 14.39, w: 1.48, h: 2.4, kind: 'opening' },                                             // 11 garderoba
     ] }),
     W([0, 1.54], [3.42, 1.54], 0.12, { mat: 'plaster_warm' }),
     W([0, 5.11], [3.42, 5.11], 0.12, { mat: 'plaster_warm' }),
@@ -150,11 +150,12 @@ export default {
     W([0, 13.87], [3.42, 13.87], 0.12, { mat: 'plaster_warm' }),
     // komunikacja | pokoje wschodnie i salon
     W([4.94, -0.125], [4.94, 5.515], 0.20, { mat: 'plaster_warm', matR: 'wenge', openings: [
-      { at: 1.0, w: 1.6, h: 2.6, kind: 'opening' },                                  // otwarcie na salon
+      { at: 0.13, w: 1.24, h: 2.6, kind: 'opening' },                                 // otwarcie na salon
+      { at: 4.02, w: 1.50, h: 2.6, kind: 'opening' },                                 // otwarcie salon/komunikacja
     ] }),
     W([4.94, 5.515], [4.94, 13.07], 0.20, { mat: 'plaster_warm', openings: [
-      { at: 1.15, w: 0.9, h: 2.4, kind: 'door', leaf: 'dark', open: 85, swing: 'R', into: 'R' },   // 13 gabinet
-      { at: 4.85, w: 0.9, h: 2.4, kind: 'door', leaf: 'dark', open: 85, swing: 'R', into: 'R' },   // 12 sypialnia
+      { at: 0.75, w: 0.91, h: 2.4, kind: 'door', leaf: 'dark', open: 85, swing: 'R', into: 'R' },  // 13 gabinet
+      { at: 4.49, w: 0.91, h: 2.4, kind: 'door', leaf: 'dark', open: 85, swing: 'R', into: 'R' },  // 12 sypialnia
     ] }),
     W([3.54, 11.17], [4.84, 11.17], 0.12, { mat: 'plaster_warm', openings: [
       { at: 0.2, w: 1.0, h: 2.4, kind: 'door', leaf: 'dark', open: 85, swing: 'L', into: 'L' },    // wejście do master
@@ -213,7 +214,6 @@ export default {
     { rect: [5.04, 8.60, 8.27, 9.22], h: H, mat: 'wenge', doors: 'y0' },                        // zabudowa 13
     { rect: [0, 1.60, 0.60, 3.30], h: H, mat: 'wenge', doors: 'x1' },                           // szafy sypialni 6
     { rect: [0, 5.17, 0.60, 6.90], h: H, mat: 'wenge', doors: 'x1' },                           // szafy sypialni 7
-    { rect: [3.54, 13.07, 4.30, 14.60], h: H, mat: 'wenge', doors: 'x1' },                      // zabudowa master
     // spiżarnia, pralnia, technika
     { rect: [7.34, -1.43, 7.80, -0.20], h: 2.3, mat: 'wardrobe_dark' },
     { rect: [8.90, -1.43, 9.32, -0.20], h: 2.3, mat: 'wardrobe_dark' },
@@ -356,7 +356,7 @@ export default {
     { type: 'downlight', x: 3.0, y: -1.1 },
     { type: 'pantryShelves', x: 8.35, y: -1.05, rot: 180, w: 1.9, h: 2.2 },
     { type: 'downlight', x: 8.3, y: -0.8 },
-    { type: 'car', x: 0.1, y: -5.65, rot: 0 }, { type: 'car', x: 3.0, y: -5.65, rot: 0 },
+    { type: 'carG', x: 0.3, y: -5.55, rot: 0, color: 0x2b2e31 }, { type: 'carPanamera', x: 3.3, y: -5.65, rot: 0, color: 0x14181f },
     { type: 'downlight', x: -1.0, y: -1.2, z: 2.6 },
     // ===== TARAS ZADASZONY
     { type: 'curvedSofa', x: 11.4, y: 7.25, rot: 0, w: 2.8, d: 1.05, mat: 'outdoor_seat' },

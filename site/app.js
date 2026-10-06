@@ -997,5 +997,6 @@ async function main() {
   $('#loading').hidden = true;
   animate();
 }
-window.__app = { scene, house, moveTo, resolveCollision, checkPassages, pos: () => worldToPlan(camera.position), walk: (dx, dy, n = 40) => { let p = worldToPlan(camera.position); for (let i = 0; i < n; i++) { p = resolveCollision(p.x + dx, p.y + dy); } camera.position.copy(planToWorld(p.x, p.y, eyeZ + EYE)); return p; } };
+window.__app = { scene, house, camera, moveTo, resolveCollision, checkPassages,
+  view: (x, y, z, tx, ty, tz) => { camera.position.copy(planToWorld(x, y, z)); camera.lookAt(planToWorld(tx, ty, tz ?? 1)); }, pos: () => worldToPlan(camera.position), walk: (dx, dy, n = 40) => { let p = worldToPlan(camera.position); for (let i = 0; i < n; i++) { p = resolveCollision(p.x + dx, p.y + dy); } camera.position.copy(planToWorld(p.x, p.y, eyeZ + EYE)); return p; } };
 main().catch((e) => { console.error(e); $('#loading').textContent = 'Błąd: ' + e.message; });

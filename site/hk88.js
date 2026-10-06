@@ -293,7 +293,7 @@ export default {
     { type: 'downlight', x: 16.4, y: 0.3 }, { type: 'downlight', x: 19.1, y: 0.0 },
     { type: 'pouf', x: 13.6, y: -0.1, r: 0.35 },
     // garaż
-    { type: 'car', x: 14.4, y: -5.2, rot: 0 }, { type: 'car', x: 18.2, y: -5.2, rot: 0 },
+    { type: 'carG', x: 14.5, y: -5.1, rot: 0, color: 0x2b2e31 }, { type: 'carPanamera', x: 18.1, y: -5.2, rot: 0, color: 0x14181f },
     // taras zadaszony T1
     { type: 'outdoorTable', x: -4.1, y: 4.2, rot: 90, w: 2.4, d: 1.0 },
     { type: 'outdoorChair', x: -4.65, y: 3.3, rot: 90 }, { type: 'outdoorChair', x: -4.65, y: 4.2, rot: 90 }, { type: 'outdoorChair', x: -4.65, y: 5.1, rot: 90 },
