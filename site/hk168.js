@@ -183,7 +183,7 @@ export default {
       { at: 0.75, w: 0.9, h: 2.1, kind: 'door', leaf: 'white', open: 85, swing: 'L' },             // kotłownia
     ] }),
     W([-3.31, -2.185], [4.90, -2.185], 0.25, { matR: 'garage_wall', matL: 'plaster_warm', openings: [
-      { at: 7.4, w: 0.9, h: 2.1, kind: 'door', leaf: 'white', open: 80, swing: 'R', into: 'L' },   // garaż → wiatrołap
+      { at: 7.21, w: 0.9, h: 2.1, kind: 'door', leaf: 'white', open: 80, swing: 'R', into: 'L' },  // garaż → wiatrołap
       { at: 3.2, w: 0.9, h: 2.1, kind: 'door', leaf: 'white', open: 80, swing: 'R', into: 'L' },   // garaż → kotłownia
     ] }),
     // prysznice – tafle szkła

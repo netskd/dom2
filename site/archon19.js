@@ -25,13 +25,13 @@ export default {
     { id: 'kuchnia', name: '3 · Kuchnia', rect: [0.4, 7.7, 4.55, 12.2], spawn: [4.3, 9.0], look: [-0.8, 0.6] },
     { id: 'jadalnia', name: '4 · Jadalnia', rect: [0.4, 12.2, 5.0, 16.4], spawn: [4.6, 12.8], look: [-0.7, 0.7] },
     { id: 'salon', name: '4 · Salon', rect: [5.0, 12.3, 10.1, 18.8], spawn: [6.2, 13.2], look: [0.5, 0.85] },
-    { id: 'hol', name: '5 · Korytarz', rect: [10.3, 11.2, 14.45, 13.35], spawn: [10.8, 12.4], look: [1, 0.15] },
+    { id: 'hol', name: '5 · Korytarz', rect: [10.3, 11.2, 14.45, 13.35], spawn: [11.6, 12.2], look: [1, 0.15] },
     { id: 'korytarz', name: '5 · Korytarz (pokoje)', rect: [13.27, 13.35, 15.77, 17.51], spawn: [13.9, 13.7], look: [0.1, 1] },
-    { id: 'garderoba', name: '6 · Garderoba', rect: [10.9, 13.35, 13.27, 14.9], spawn: [12.7, 14.1], look: [-1, 0] },
+    { id: 'garderoba', name: '6 · Garderoba', rect: [10.9, 13.35, 13.27, 14.9], spawn: [12.0, 13.8], look: [-1, 0.2] },
     { id: 'pralnia', name: '7 · Pralnia', rect: [10.9, 15.05, 13.27, 17.41], spawn: [12.7, 16.2], look: [-1, 0.2] },
     { id: 'pokoj1', name: '8 · Pokój', rect: [10.71, 17.51, 14.0, 21.52], spawn: [13.5, 18.2], look: [-0.6, 0.8] },
     { id: 'pokoj2', name: '9 · Pokój', rect: [15.0, 17.51, 18.3, 21.52], spawn: [15.5, 18.2], look: [0.6, 0.8] },
-    { id: 'lazienka', name: '10 · Łazienka', rect: [14.45, 15.05, 18.3, 17.41], spawn: [16.6, 16.0], look: [0.15, 0.99] },
+    { id: 'lazienka', name: '10 · Łazienka', rect: [14.45, 15.05, 18.3, 17.41], spawn: [15.3, 16.5], look: [0.7, 0.7] },
     { id: 'pokoj3', name: '11 · Pokój', rect: [14.45, 11.7, 18.3, 14.96], spawn: [14.9, 13.0], look: [1, 0.2] },
     { id: 'sypialnia', name: '12 · Sypialnia', rect: [15.0, 6.55, 18.3, 11.5], spawn: [16.6, 10.6], look: [0.05, -1] },
     { id: 'garderoba2', name: '13 · Garderoba', rect: [12.9, 6.55, 15.0, 8.4], spawn: [14.5, 10.8], look: [-0.2, -1] },
@@ -39,7 +39,7 @@ export default {
     { id: 'toaleta', name: '15 · Toaleta', rect: [10.3, 8.6, 11.7, 10.0], spawn: [11.0, 10.6], look: [0, -1] },
     { id: 'kotlownia', name: '16 · Kotłownia', rect: [10.3, 6.55, 12.9, 8.4], spawn: [11.0, 7.0], look: [1, 0.3] },
     { id: 'garaz', name: '17 · Garaż', rect: [10.3, 0.45, 18.3, 6.55], spawn: [10.9, 6.25], look: [0.55, -0.84] },
-    { id: 'taras', name: 'Taras zadaszony', rect: [-1.5, 16.4, 10.4, 22.0], spawn: [7.5, 20.6], look: [-1, 0.1], outdoor: true },
+    { id: 'taras', name: 'Taras zadaszony', rect: [-1.5, 16.4, 10.4, 22.0], spawn: [4.0, 19.6], look: [-0.6, 0.8], outdoor: true },
     { id: 'ogrod', name: 'Ogród · widok na dom', rect: [-8, 22, 12, 30], spawn: [-6.0, 27.0], look: [0.7, -0.7], outdoor: true },
     { id: 'front', name: 'Ulica · widok na front', rect: [5, -12, 20, -2], spawn: [14.0, -9.0], look: [-0.2, 1], outdoor: true },
   ],
@@ -114,16 +114,19 @@ export default {
     W([4.7, 10.05], [7.55, 10.05], 0.15, { mat: 'plaster' }),                                   // spiżarnia N
     W([4.7, 7.5], [4.7, 10.05], 0.15, { mat: 'plaster', openings: [{ at: 1.3, w: 0.8, h: 2.0, kind: 'door', leaf: 'dark', open: 25, swing: 'L' }] }),
     W([5.15, 10.05], [5.15, 12.22], 0.1, { mat: 'plaster' }),                                   // zabudowa kuchni | nisza szafy
-    W([10.15, 7.5], [10.15, 12.22], 0.3, { mat: 'plaster', openings: [{ at: 3.8, w: 0.8, h: 2.0, kind: 'door', leaf: 'white', open: 85, swing: 'L' }] }),  // wiatrołap | hol
+    W([10.15, 7.5], [10.15, 12.22], 0.3, { mat: 'plaster', openings: [
+      { at: 0.85, w: 0.91, h: 2.0, kind: 'door', leaf: 'white', open: 85, swing: 'L' },                // wiatrołap → kotłownia (pomiar rzutu)
+      { at: 2.40, w: 1.04, h: 2.2, kind: 'opening' },                                                  // przejście wiatrołap → hol (pomiar)
+      { at: 3.78, w: 0.89, h: 2.0, kind: 'door', leaf: 'white', open: 85, swing: 'L' },                // drzwi do części dziennej
+    ] }),
     W([10.0, 6.7], [18.5, 6.7], 0.3, { matR: 'garage_wall', matL: 'plaster', openings: [{ at: 0.6, w: 0.8, h: 2.0, kind: 'door', leaf: 'white', open: 0, into: 'L' }] }),   // garaż N
-    W([12.9, 6.7], [12.9, 8.5], 0.15, { mat: 'plaster' }),
-    W([10.3, 8.5], [14.0, 8.5], 0.15, { mat: 'plaster', matL: 'marble_wall' }),                 // kotłownia/garderoba N (łazienki od góry)
+    W([11.70, 8.5], [14.0, 8.5], 0.15, { mat: 'plaster', matL: 'marble_wall' }),                // ściana łazienki (na rzucie zaczyna się dopiero tutaj)
     W([11.75, 8.5], [11.75, 11.2], 0.15, { mat: 'marble_wall' }),                                // toaleta | łazienka
-    W([10.3, 10.05], [11.75, 10.05], 0.1, { mat: 'plaster', matR: 'marble_wall', openings: [{ at: 0.3, w: 0.8, h: 2.0, kind: 'door', leaf: 'white', open: 60, swing: 'R' }] }),  // toaleta N
-    W([11.75, 11.2], [14.0, 11.2], 0.15, { mat: 'plaster', matR: 'marble_wall' }),              // łazienka 14 N
+    W([10.3, 10.05], [11.75, 10.05], 0.1, { mat: 'plaster', matR: 'marble_wall', openings: [{ at: 0.1, w: 0.87, h: 2.0, kind: 'door', leaf: 'white', open: 75, swing: 'R' }] }),  // toaleta N (pomiar)
+    W([11.75, 11.2], [14.0, 11.2], 0.15, { mat: 'plaster', matR: 'marble_wall', openings: [{ at: 1.40, w: 0.81, h: 2.0, kind: 'door', leaf: 'white', open: 85, swing: 'R', into: 'L' }] }),   // hol → łazienka 14
     W([14.0, 8.5], [14.0, 11.2], 0.1, { matR: 'plaster', matL: 'marble_wall', openings: [{ at: 1.1, w: 0.8, h: 2.0, kind: 'door', leaf: 'dark', open: 70, swing: 'L', into: 'L' }] }),  // łazienka | garderoba
     W([15.0, 6.7], [15.0, 11.6], 0.15, { mat: 'plaster', openings: [{ at: 2.8, w: 0.8, h: 2.0, kind: 'door', leaf: 'white', open: 85, swing: 'L' }] }),   // garderoba | sypialnia
-    W([14.45, 11.6], [18.5, 11.6], 0.2, { mat: 'plaster' }),                                    // sypialnia | pokój 11
+    W([14.45, 11.6], [18.5, 11.6], 0.2, { mat: 'plaster', openings: [{ at: 0.25, w: 0.96, h: 2.0, kind: 'door', leaf: 'white', open: 85, swing: 'L', into: 'L' }] }),   // sypialnia | pokój 11 (pomiar)
     W([14.45, 11.2], [14.45, 16.1], 0.15, { mat: 'plaster', openings: [
       { at: 1.4, w: 0.8, h: 2.0, kind: 'door', leaf: 'white', open: 85, swing: 'L' },
       { at: 4.0, w: 0.8, h: 2.0, kind: 'door', leaf: 'dark', open: 70, swing: 'R' },
@@ -141,7 +144,7 @@ export default {
       { at: 3.80, w: 0.79, h: 2.0, kind: 'door', leaf: 'white', open: 85, swing: 'L', into: 'L' },
     ] }),
     W([14.5, 17.51], [14.5, 21.7], 1.0, { mat: 'plaster' }),                                    // szacht między pokojami
-    W([13.4, 10.6], [13.4, 11.2], 0.05, { mat: 'glass_panel', h: 2.2 }),                          // kabina prysznicowa (łazienka 14)
+    W([12.55, 10.55], [12.55, 11.2], 0.05, { mat: 'glass_panel', h: 2.2 }),                          // kabina prysznicowa (łazienka 14)
   ],
 
   boxes: [
@@ -149,7 +152,7 @@ export default {
     { rect: [14.45, 15.05, 18.3, 15.17], h: H, mat: 'marble_wall' },                              // łazienka 10 – marmur
     { rect: [18.18, 15.05, 18.3, 17.41], h: H, mat: 'marble_wall' },
     { rect: [11.75, 8.6, 11.87, 11.2], h: H, mat: 'marble_wall' },                                // łazienka 14 – marmur
-    { rect: [11.87, 11.08, 14.0, 11.2], h: H, mat: 'marble_wall' },
+    { rect: [11.87, 11.08, 13.08, 11.2], h: H, mat: 'marble_wall' },
     { rect: [16.55, 15.17, 18.25, 16.07], h: 0.56, mat: 'marble_wall' },                           // wanna zabudowana (obudowa)
 
     { rect: [0.4, 9.5, 1.0, 12.15], h: 2.6, mat: 'wenge', doors: 'x1', ovens: [[10.4, 11.4]], ovenFace: 'x1' },   // wysoka zabudowa z piekarnikami
@@ -168,7 +171,7 @@ export default {
     { rect: [10.71, 17.6, 13.0, 18.2], h: H, mat: 'walnut', doors: 'y1' },                        // szafa pokój 8
     { rect: [16.4, 17.6, 18.3, 18.2], h: H, mat: 'walnut', doors: 'y1' },                         // szafa pokój 9
     { rect: [10.9, 13.35, 11.5, 14.9], h: H, mat: 'walnut', doors: 'x1' }, { rect: [11.5, 14.3, 13.2, 14.9], h: H, mat: 'walnut', doors: 'y0' },   // garderoba 6
-    { rect: [12.95, 6.7, 13.55, 8.4], h: H, mat: 'walnut', doors: 'x1' }, { rect: [14.4, 6.7, 14.95, 8.4], h: H, mat: 'wardrobe_glass', doors: 'x0' },   // garderoba 13
+    { rect: [12.95, 6.7, 13.55, 7.55], h: H, mat: 'walnut', doors: 'x1' }, { rect: [14.4, 6.7, 14.95, 8.4], h: H, mat: 'wardrobe_glass', doors: 'x0' },   // garderoba 13
     { rect: [12.3, 16.8, 13.2, 17.41], h: 0.9, mat: 'white_gloss', doors: 'none' },               // pralnia blat
     { rect: [12.28, 16.78, 13.22, 17.43], z: 0.9, h: 0.03, mat: 'stone_top' },
     { rect: [11.7, 6.7, 12.4, 7.4], h: 1.6, mat: 'appliance' },                                    // kocioł
@@ -233,7 +236,7 @@ export default {
     { type: 'wallSpot', x: 16.2, y: 6.65, z: 2.7 }, { type: 'wallSpot', x: 17.2, y: 6.65, z: 2.7 },
     { type: 'vanityStone', x: 12.9, y: 8.64, rot: 180, w: 1.5, basins: 1 }, { type: 'mirrorLed', x: 12.9, y: 8.68, rot: 180, w: 1.5, h: 0.85, z: 1.78 },
     { type: 'towels', x: 12.3, y: 8.4, rot: 180, z: 1.02 }, { type: 'towelRail', x: 11.82, y: 10.2, rot: 90, z: 1.05 },
-    { type: 'wcWall', x: 12.4, y: 11.15, rot: 0 }, { type: 'shower', x: 13.7, y: 10.8 },
+    { type: 'wcWall', x: 12.4, y: 11.15, rot: 0 }, { type: 'shower', x: 12.15, y: 10.8 },
     { type: 'slats', x: 11.85, y: 9.9, rot: 90, len: 1.6 },
     { type: 'downlight', x: 12.9, y: 9.9 },
     // toaleta 15

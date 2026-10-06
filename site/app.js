@@ -644,6 +644,59 @@ function buildFurniture() {
   }
 }
 
+// pełny audyt: wymiary otworów + osiągalność każdego pomieszczenia (zalewanie siatki)
+function auditHouse() {
+  const issues = [];
+  for (const w of HOUSE.walls) {
+    const L = Math.hypot(w.b[0] - w.a[0], w.b[1] - w.a[1]);
+    const ops = [...(w.openings || [])].sort((p, q) => p.at - q.at);
+    const name = `ściana (${w.a[0]},${w.a[1]})→(${w.b[0]},${w.b[1]})`;
+    let prevEnd = -1, prevOp = null;
+    for (const op of ops) {
+      const end = op.at + op.w, wallH = w.h ?? H;
+      if (op.at < -0.001) issues.push(`${name}: otwór zaczyna się przed ścianą (at=${op.at})`);
+      if (end > L + 0.001) issues.push(`${name}: otwór wychodzi poza ścianę (${end.toFixed(2)} > ${L.toFixed(2)})`);
+      if (op.at < prevEnd - 0.001) issues.push(`${name}: otwory nachodzą na siebie (${prevOp.kind} ${prevOp.at}+${prevOp.w} × ${op.kind} ${op.at})`);
+      if ((op.sill || 0) + op.h > wallH + 0.001) issues.push(`${name}: otwór wyższy niż ściana (${((op.sill || 0) + op.h).toFixed(2)} > ${wallH})`);
+      if (op.kind === 'door' && op.w < 0.7) issues.push(`${name}: drzwi węższe niż 70 cm (${op.w})`);
+      prevEnd = end; prevOp = op;
+    }
+  }
+  // osiągalność: BFS po siatce 15 cm od punktu startowego
+  const step = 0.15, start = HOUSE.rooms.find((r) => r.id === HOUSE.start.room) || HOUSE.rooms[0];
+  const key = (i, j) => i + ',' + j;
+  const free = (x, y) => { const r = resolveCollision(x, y); return Math.abs(r.x - x) < 1e-6 && Math.abs(r.y - y) < 1e-6; };
+  const seen = new Set(), queue = [[Math.round(start.spawn[0] / step), Math.round(start.spawn[1] / step)]];
+  seen.add(key(queue[0][0], queue[0][1]));
+  let guard = 0;
+  while (queue.length && guard++ < 400000) {
+    const [i, j] = queue.pop();
+    for (const [di, dj] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const ni = i + di, nj = j + dj, k = key(ni, nj);
+      if (seen.has(k)) continue;
+      const x = ni * step, y = nj * step;
+      if (x < -40 || x > 60 || y < -40 || y > 60) continue;
+      if (!free(x, y)) continue;
+      seen.add(k); queue.push([ni, nj]);
+    }
+  }
+  for (const r of HOUSE.rooms) {
+    // osiągalność liczona dla CAŁEGO pomieszczenia, nie tylko punktu startowego
+    let reached = 0, freeCells = 0;
+    for (let x = r.rect[0] + 0.2; x < r.rect[2] - 0.1; x += step)
+      for (let y = r.rect[1] + 0.2; y < r.rect[3] - 0.1; y += step) {
+        const i = Math.round(x / step), j = Math.round(y / step);
+        if (free(i * step, j * step)) { freeCells++; if (seen.has(key(i, j))) reached++; }
+      }
+    if (freeCells === 0) issues.push(`${r.id} (${r.name}): brak wolnego miejsca – pomieszczenie zastawione`);
+    else if (reached === 0) issues.push('NIEOSIĄGALNE z wejścia: ' + r.id + ' (' + r.name + ')');
+    const [fx, fy] = freeSpot(r.spawn[0], r.spawn[1]);
+    const shift = Math.hypot(fx - r.spawn[0], fy - r.spawn[1]);
+    if (shift > 0.9) issues.push(`${r.id}: punkt startowy zastawiony – kamera przesuwa się o ${shift.toFixed(2)} m`);
+  }
+  const blocked = checkPassages();
+  return { issues, blocked, cells: seen.size };
+}
 function checkPassages() {
   const bad = [];
   for (const p of passages) { const nx = -p.uy, ny = p.ux;
@@ -837,10 +890,25 @@ function resolveCollision(px, py) {
   }
   return { x, y };
 }
+function freeSpot(x, y) {
+  // najbliższy wolny punkt — żeby teleport nie wstawiał kamery w mebel
+  const ok = (px, py) => { const r = resolveCollision(px, py); return Math.abs(r.x - px) < 1e-6 && Math.abs(r.y - py) < 1e-6; };
+  if (ok(x, y)) return [x, y];
+  for (let ring = 1; ring <= 14; ring++) {
+    const rad = ring * 0.18;
+    for (let k = 0; k < ring * 8; k++) {
+      const a = (k / (ring * 8)) * Math.PI * 2;
+      const px = x + Math.cos(a) * rad, py = y + Math.sin(a) * rad;
+      if (ok(px, py)) return [px, py];
+    }
+  }
+  return [x, y];
+}
 function moveTo(roomId) {
   const r = HOUSE.rooms.find((q) => q.id === roomId); if (!r) return;
   eyeZ = r.z || 0;
-  const w = planToWorld(r.spawn[0], r.spawn[1], eyeZ + EYE); camera.position.copy(w);
+  const [sx, sy] = freeSpot(r.spawn[0], r.spawn[1]);
+  const w = planToWorld(sx, sy, eyeZ + EYE); camera.position.copy(w);
   lookPlan(r.look[0], r.look[1]);
   if (state.mode === 'orbit') setMode('walk');
 }
@@ -997,6 +1065,6 @@ async function main() {
   $('#loading').hidden = true;
   animate();
 }
-window.__app = { scene, house, camera, moveTo, resolveCollision, checkPassages,
+window.__app = { scene, house, camera, moveTo, resolveCollision, checkPassages, auditHouse,
   view: (x, y, z, tx, ty, tz) => { camera.position.copy(planToWorld(x, y, z)); camera.lookAt(planToWorld(tx, ty, tz ?? 1)); }, pos: () => worldToPlan(camera.position), walk: (dx, dy, n = 40) => { let p = worldToPlan(camera.position); for (let i = 0; i < n; i++) { p = resolveCollision(p.x + dx, p.y + dy); } camera.position.copy(planToWorld(p.x, p.y, eyeZ + EYE)); return p; } };
 main().catch((e) => { console.error(e); $('#loading').textContent = 'Błąd: ' + e.message; });

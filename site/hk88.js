@@ -167,11 +167,11 @@ export default {
       { at: 7.35, w: 0.9, h: 2.4, kind: 'door', leaf: 'dark', open: 0 },
     ] }),
     W([24.75, 1.68], [29.35, 1.68], 0.16, { mat: 'plaster', openings: [{ at: 0.15, w: 1.0, h: 2.3, kind: 'opening' }] }),
-    W([25.7, 5.99], [28.3, 5.99], 0.78, { mat: 'walnut_fluted' }),   // ściana za łóżkiem (obustronnie ryflowana)
+    W([25.95, 5.99], [28.05, 5.99], 0.6, { mat: 'walnut_fluted' }),   // ściana za łóżkiem (obustronnie ryflowana)
     // sauna (ściany z drewna, front szklany)
     W([21.0, -2.77], [23.25, -2.77], 0.06, { mat: 'sauna', h: 2.3, openings: [
       { at: 0.1, w: 0.7, h: 2.0, kind: 'door', leaf: 'glass', open: 70, swing: 'L' },
-      { at: 0.86, w: 2.3, h: 2.2, kind: 'glass', frame: 'thin' },
+      { at: 0.86, w: 1.3, h: 2.2, kind: 'glass', frame: 'thin' },
     ] }),
     W([23.25, -2.77], [23.25, -4.67], 0.06, { mat: 'sauna', h: 2.3 }),
     // prysznic – szklana tafla
@@ -186,8 +186,8 @@ export default {
     { rect: [16.85, 3.45, 16.91, 7.41], h: H, mat: 'walnut', doors: 'x1' },          // front szafy pokój 9
     { rect: [20.45, 3.45, 21.05, 7.41], h: H, mat: 'walnut', doors: 'x1' },          // szafa pokój 10
     { rect: [24.88, 7.9, 29.2, 8.5], h: H, mat: 'wardrobe_glass', doors: 'y0' },     // garderoba sypialni
-    { rect: [24.88, 6.4, 25.45, 7.9], h: H, mat: 'wardrobe_glass', doors: 'x1' },
-    { rect: [28.6, 6.4, 29.2, 7.9], h: H, mat: 'wardrobe_glass', doors: 'x0' },
+    { rect: [24.88, 6.7, 25.35, 7.9], h: H, mat: 'wardrobe_glass', doors: 'x1' },
+    { rect: [28.7, 6.7, 29.2, 7.9], h: H, mat: 'wardrobe_glass', doors: 'x0' },
     { rect: [24.88, 0, 29.2, 0.6], h: H, mat: 'walnut', doors: 'y1' },               // garderoba 13
     { rect: [12.27, 0.83, 14.95, 1.43], h: H, mat: 'walnut', doors: 'y0' },          // garderoba 2
     { rect: [12.27, -1.62, 14.95, -1.02], h: H, mat: 'walnut', doors: 'y1' },
